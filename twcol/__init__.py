@@ -50,7 +50,7 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
         df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S'), 
                   index = False , columns = ['user', 'mention', 'tweet_id','date'])
     else:
-        return(df)
+        return(df[['user', 'mention', 'tweet_id','date']])
     
     
 #%%
@@ -80,21 +80,62 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
                     final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
-        df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S'), 
-                  index = False , columns = ['user', 'mention', 'tweet_id','date'])
+        df.to_csv(file_prefix + '_hashtags_' + time.strftime('%Y%m%d-%H%M%S'), 
+                  index = False , columns = ['user', 'hashtag', 'tweet_id','date'])
     else:
-        return(df)
+        return(df[['user', 'hashtag', 'tweet_id','date']])
+        
+#%%
+def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str', 
+                     to_csv = True):
+    """
+   Creates hashtag edgelist (either user to hashtag OR comention).  
+   Can return data.frame or write to csv.  
+   
+    """
+    import json
+    import pandas as pd
+    import time
+    import itertools
+    if type(files) != 'list':
+       files = [files]
+    final = {'hash1': [],'hash2': [], 'user': [] , 'tweet_id': [], 'date':  []}
+    for f in files:
+        infile = open(f, 'r')
+        for line in infile:
+            tweet = json.loads(line)
+            h = get_hash(tweet)
+            if len(h) > 1:
+                combo = list(itertools.combinations(h, 2))
+                for pair in combo:
+                    final['user'].append(tweet['user'][name])
+                    final['hash1'].append(pair[0])
+                    final['hash2'].append(pair[1])
+                    final['tweet_id'].append(tweet['id_str'])
+                    final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_hashtags_' + time.strftime('%Y%m%d-%H%M%S'), 
+                  index = False , columns = ['user', 'hash1', 'hash2', 'tweet_id','date'])
+    else:
+        return(df[['user', 'hash1', 'hash2', 'tweet_id','date']])
             
     
 #%%
+# For testing
 
-import json
-infile = open('data.json', 'r')
-h = []
-m = []
-for line in infile:
-    tweet = json.loads(line)
-    h.append(get_hash(tweet))
-    m.append(get_mention(tweet, kind = 'screen_name'))
-
-extract_mentions('data.json', name = 'screen_name')
+#import json
+#infile = open('data.json', 'r')
+#h = []
+#m = []
+#for line in infile:
+#    tweet = json.loads(line)
+#    h.append(get_hash(tweet))
+#    m.append(get_mention(tweet, kind = 'screen_name'))
+#
+#extract_mentions('data.json', name = 'screen_name')
+#
+#extract_hashtags('data.json', name = 'screen_name')
+#
+#df = extract_hash_comention('data.json', to_csv = False)
+#df.head()
