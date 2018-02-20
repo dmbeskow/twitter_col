@@ -23,10 +23,9 @@ def get_mention(tweet, kind = 'id_str'):
     return(men)
     
 #%%
-#Extract mentions
 def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
     """
-   Creates mention edgegraph.  Can return data.frame or write to csv.  
+   Creates mention edgelist.  Can return data.frame or write to csv.  
    
     """
     import json
@@ -48,10 +47,43 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
                     final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
-        df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S'), index = False , columns = ['user', 'mention', 'tweet_id','date'])
+        df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S'), 
+                  index = False , columns = ['user', 'mention', 'tweet_id','date'])
     else:
         return(df)
     
+    
+#%%
+def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str', 
+                     to_csv = True):
+    """
+   Creates hashtag edgelist (either user to hashtag OR comention).  
+   Can return data.frame or write to csv.  
+   
+    """
+    import json
+    import pandas as pd
+    import time
+    if type(files) != 'list':
+       files = [files]
+    final = {'date': [],'hashtag': [], 'user': [] , 'tweet_id': []}
+    for f in files:
+        infile = open(f, 'r')
+        for line in infile:
+            tweet = json.loads(line)
+            h = get_hash(tweet)
+            if len(h) > 0:
+                for hashtag in h:
+                    final['user'].append(tweet['user'][name])
+                    final['hashtag'].append(hashtag)
+                    final['tweet_id'].append(tweet['id_str'])
+                    final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S'), 
+                  index = False , columns = ['user', 'mention', 'tweet_id','date'])
+    else:
+        return(df)
             
     
 #%%
@@ -65,4 +97,4 @@ for line in infile:
     h.append(get_hash(tweet))
     m.append(get_mention(tweet, kind = 'screen_name'))
 
-extract_mentions('data.json')
+extract_mentions('data.json', name = 'screen_name')
