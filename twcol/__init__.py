@@ -24,11 +24,17 @@ def get_mention(tweet, kind = 'id_str'):
     
 #%%
 #Extract mentions
-def extract_mentions_toCSV(files, name = 'id_str'):
+def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
+    """
+   Creates mention edgegraph.  Can return data.frame or write to csv.  
+   
+    """
     import json
     import pandas as pd
-    files = list(files)
-    final = {'user': [], 'mention': [],'tweet_id': [],'date': [],  }
+    import time
+    if type(files) != 'list':
+       files = [files]
+    final = {'date': [],'tweet_id': [],'mention': [], 'user': [] }
     for f in files:
         infile = open(f, 'r')
         for line in infile:
@@ -39,9 +45,13 @@ def extract_mentions_toCSV(files, name = 'id_str'):
                     final['user'].append(tweet['user'][name])
                     final['mention'].append(mention)
                     final['tweet_id'].append(tweet['id_str'])
-                    final[']
-            
-            
+                    final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S'), index = False , columns = ['user', 'mention', 'tweet_id','date'])
+    else:
+        return(df)
+    
             
     
 #%%
@@ -54,3 +64,5 @@ for line in infile:
     tweet = json.loads(line)
     h.append(get_hash(tweet))
     m.append(get_mention(tweet, kind = 'screen_name'))
+
+extract_mentions('data.json')
