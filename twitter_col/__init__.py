@@ -183,6 +183,8 @@ def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
     """
     import pandas as pd
     import json, time
+    
+    files = [files]
     data = { "id_str" : [],
         "name" : [],
         "screen_name" : [],
@@ -256,13 +258,15 @@ def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
                     data['status_isretweet'].append(False)
         
     df = pd.DataFrame(data)
-    
-    df.to_csv(file_prefix + '_parsedTweetData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+    if to_csv:
+        df.to_csv(file_prefix + '_parsedTweetData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
                   index = False , encoding = 'utf-8')
+    else:
+        return(df)
 
 #%%    
-# For testing
-#
+#For testing
+
 #import json
 #infile = open('data.json', 'r')
 #h = []
@@ -281,3 +285,5 @@ def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
 #
 #df = extract_retweet_network('data.json', to_csv = False)
 #df.head()
+#
+#df = parse_tweet_json('data.json')
