@@ -1,2 +1,2 @@
 include README.md
-include twcol/data.json
+include twitter_col/data.json
