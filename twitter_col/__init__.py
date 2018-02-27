@@ -217,45 +217,46 @@ def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
     for f in files:
         infile = open(f, 'r')
         for line in infile:
-            t = json.loads(line)
-            if 'user' in t.keys():
-                data['id_str'].append(t['user']['id_str'])
-                data['name'].append(t['user']['name'])
-                data['screen_name'].append(t['user']['screen_name'])
-                data['location'].append(t['user']['location'])
-                data['url'].append(t['user']['url'])
-                data['description'].append(t['user']['description'])
-                data['protected'].append(t['user']['protected'])
-                data['verified'].append(t['user']['verified'])
-                data['followers_count'].append(t['user']['followers_count'])
-                data['friends_count'].append(t['user']['friends_count'])
-                data['listed_count'].append(t['user']['listed_count'])
-                data['favourites_count'].append(t['user']['favourites_count'])
-                data['statuses_count'].append(t['user']['statuses_count'])
-                data['created_at'].append(t['user']['created_at'])
-                data['utc_offset'].append(t['user']['utc_offset'])
-                data['time_zone'].append(t['user']['time_zone'])
-                data['geo_enabled'].append(t['user']['geo_enabled'])
-                data['lang'].append(t['user']['lang'])
-                data['contributors_enabled'].append(t['user']['contributors_enabled'])
-                data['is_translator'].append(t['user']['is_translator'])
-                data['status_text'].append(t['text'])
-                data['status_source'].append(t['source'])
-                data['status_coordinates'].append(t['coordinates'])
-                data['status_lang'].append(t['lang'])
-                data['status_id'].append(t['id'])
-                data['status_created_at'].append(t['created_at'])
-        
-                if 'possibly_sensitive' in t.keys():
-                     data['status_possibly_sensitive'].append(t['possibly_sensitive'])
-                else:
-                    data['status_possibly_sensitive'].append(False)
-        
-        
-                if 'retweeted_status' in t.keys():
-                    data['status_isretweet'].append(True)
-                else:
-                    data['status_isretweet'].append(False)
+            if line != '\n':
+                t = json.loads(line)
+                if 'user' in t.keys():
+                    data['id_str'].append(t['user']['id_str'])
+                    data['name'].append(t['user']['name'])
+                    data['screen_name'].append(t['user']['screen_name'])
+                    data['location'].append(t['user']['location'])
+                    data['url'].append(t['user']['url'])
+                    data['description'].append(t['user']['description'])
+                    data['protected'].append(t['user']['protected'])
+                    data['verified'].append(t['user']['verified'])
+                    data['followers_count'].append(t['user']['followers_count'])
+                    data['friends_count'].append(t['user']['friends_count'])
+                    data['listed_count'].append(t['user']['listed_count'])
+                    data['favourites_count'].append(t['user']['favourites_count'])
+                    data['statuses_count'].append(t['user']['statuses_count'])
+                    data['created_at'].append(t['user']['created_at'])
+                    data['utc_offset'].append(t['user']['utc_offset'])
+                    data['time_zone'].append(t['user']['time_zone'])
+                    data['geo_enabled'].append(t['user']['geo_enabled'])
+                    data['lang'].append(t['user']['lang'])
+                    data['contributors_enabled'].append(t['user']['contributors_enabled'])
+                    data['is_translator'].append(t['user']['is_translator'])
+                    data['status_text'].append(t['text'])
+                    data['status_source'].append(t['source'])
+                    data['status_coordinates'].append(t['coordinates'])
+                    data['status_lang'].append(t['lang'])
+                    data['status_id'].append(t['id'])
+                    data['status_created_at'].append(t['created_at'])
+            
+                    if 'possibly_sensitive' in t.keys():
+                         data['status_possibly_sensitive'].append(t['possibly_sensitive'])
+                    else:
+                        data['status_possibly_sensitive'].append(False)
+            
+            
+                    if 'retweeted_status' in t.keys():
+                        data['status_isretweet'].append(True)
+                    else:
+                        data['status_isretweet'].append(False)
         
     df = pd.DataFrame(data)
     if to_csv:
@@ -309,49 +310,50 @@ def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
     for f in files:
         infile = open(f, 'r')
         for line in infile:
-            t = json.loads(line)
-            if 'status' in t.keys():
-                data['id_str'].append(t['id_str'])
-                data['name'].append(t['name'])
-                data['screen_name'].append(t['screen_name'])
-                data['location'].append(t['location'])
-                data['url'].append(t['url'])
-                data['description'].append(t['description'])
-                data['translator_type'].append(t['translator_type'])
-                data['protected'].append(t['protected'])
-                data['verified'].append(t['verified'])
-                data['followers_count'].append(t['followers_count'])
-                data['friends_count'].append(t['friends_count'])
-                data['listed_count'].append(t['listed_count'])
-                data['favourites_count'].append(t['favourites_count'])
-                data['statuses_count'].append(t['statuses_count'])
-                data['created_at'].append(t['created_at'])
-                data['utc_offset'].append(t['utc_offset'])
-                data['time_zone'].append(t['time_zone'])
-                data['geo_enabled'].append(t['geo_enabled'])
-                data['lang'].append(t['lang'])
-                data['contributors_enabled'].append(t['contributors_enabled'])
-                data['is_translator'].append(t['is_translator'])
-                data['profile_background_image_url'].append(t['profile_background_image_url'])
-                data['profile_background_tile'].append(t['profile_background_tile'])
-                data['profile_use_background_image'].append(t['profile_use_background_image'])
-                data['profile_image_url'].append(t['profile_image_url'])
-                data['profile_image_url_https'].append(t['profile_image_url_https'])
-                data['status_text'].append(t['status']['text'])
-                data['status_source'].append(t['status']['source'])
-                data['status_coordinates'].append(t['status']['coordinates'])
-                data['status_lang'].append(t['status']['lang'])
-                
-                if 'possibly_sensitive' in t['status'].keys():
-                     data['status_possibly_sensitive'].append(t['status']['possibly_sensitive'])
-                else: 
-                    data['status_possibly_sensitive'].append(False)
-                   
-                
-                if 'retweeted_status' in t['status'].keys():
-                    data['status_isretweet'].append(True)
-                else: 
-                    data['status_isretweet'].append(False)
+            if line != '\n' :
+                t = json.loads(line)
+                if 'status' in t.keys():
+                    data['id_str'].append(t['id_str'])
+                    data['name'].append(t['name'])
+                    data['screen_name'].append(t['screen_name'])
+                    data['location'].append(t['location'])
+                    data['url'].append(t['url'])
+                    data['description'].append(t['description'])
+                    data['translator_type'].append(t['translator_type'])
+                    data['protected'].append(t['protected'])
+                    data['verified'].append(t['verified'])
+                    data['followers_count'].append(t['followers_count'])
+                    data['friends_count'].append(t['friends_count'])
+                    data['listed_count'].append(t['listed_count'])
+                    data['favourites_count'].append(t['favourites_count'])
+                    data['statuses_count'].append(t['statuses_count'])
+                    data['created_at'].append(t['created_at'])
+                    data['utc_offset'].append(t['utc_offset'])
+                    data['time_zone'].append(t['time_zone'])
+                    data['geo_enabled'].append(t['geo_enabled'])
+                    data['lang'].append(t['lang'])
+                    data['contributors_enabled'].append(t['contributors_enabled'])
+                    data['is_translator'].append(t['is_translator'])
+                    data['profile_background_image_url'].append(t['profile_background_image_url'])
+                    data['profile_background_tile'].append(t['profile_background_tile'])
+                    data['profile_use_background_image'].append(t['profile_use_background_image'])
+                    data['profile_image_url'].append(t['profile_image_url'])
+                    data['profile_image_url_https'].append(t['profile_image_url_https'])
+                    data['status_text'].append(t['status']['text'])
+                    data['status_source'].append(t['status']['source'])
+                    data['status_coordinates'].append(t['status']['coordinates'])
+                    data['status_lang'].append(t['status']['lang'])
+                    
+                    if 'possibly_sensitive' in t['status'].keys():
+                         data['status_possibly_sensitive'].append(t['status']['possibly_sensitive'])
+                    else: 
+                        data['status_possibly_sensitive'].append(False)
+                       
+                    
+                    if 'retweeted_status' in t['status'].keys():
+                        data['status_isretweet'].append(True)
+                    else: 
+                        data['status_isretweet'].append(False)
         
     df = pd.DataFrame(data)
     if to_csv:
