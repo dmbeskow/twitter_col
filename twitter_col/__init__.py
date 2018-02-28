@@ -177,7 +177,7 @@ def get_all_network_files( files, file_prefix = 'twitter', name = 'id_str'):
     extract_retweet_network(files, file_prefix=file_prefix, name=name, to_csv=True)
 #%%
     
-def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
+def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
     """
     This parses 'tweet' json to a pandas dataFrame.
     """
@@ -219,6 +219,11 @@ def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
         for line in infile:
             if line != '\n':
                 t = json.loads(line)
+                if 'status' in t.keys():
+                    temp = t['status']
+                    getRid = t.pop('status', 'Entry not found')
+                    temp['user'] = t
+                    t = temp
                 if 'user' in t.keys():
                     data['id_str'].append(t['user']['id_str'])
                     data['name'].append(t['user']['name'])
@@ -266,101 +271,101 @@ def parse_tweet_json(files, file_prefix = 'twitter', to_csv = False):
         return(df)
 
 #%%
-def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
-    """
-    This parses 'tweet' json to a pandas dataFrame.
-    """
-    import pandas as pd
-    import json, time
-    
-    files = [files]
-    data = { "id_str" : [],
-            "name" : [],
-            "screen_name" : [],
-            "location" : [],
-            "url" : [],
-            "description" : [],
-            "translator_type" : [],
-            "protected" : [],
-            "verified" : [],
-            "followers_count" : [],
-            "friends_count" : [],
-            "listed_count" : [],
-            "favourites_count" : [],
-            "statuses_count" : [],
-            "created_at" : [],
-            "utc_offset" : [],
-            "time_zone" : [],
-            "geo_enabled" : [],
-            "lang" : [],
-            "contributors_enabled" : [],
-            "is_translator" : [],
-            "profile_background_image_url" : [],
-            "profile_background_tile" : [],
-            "profile_use_background_image" : [],
-            "profile_image_url" : [],
-            "profile_image_url_https" : [],
-            "status_text" : [],
-            "status_source" : [],
-            "status_coordinates" : [],
-            "status_possibly_sensitive" : [],
-             "status_isretweet" : [],
-             "status_lang" : []
-    }
-    for f in files:
-        infile = open(f, 'r')
-        for line in infile:
-            if line != '\n' :
-                t = json.loads(line)
-                if 'status' in t.keys():
-                    data['id_str'].append(t['id_str'])
-                    data['name'].append(t['name'])
-                    data['screen_name'].append(t['screen_name'])
-                    data['location'].append(t['location'])
-                    data['url'].append(t['url'])
-                    data['description'].append(t['description'])
-                    data['translator_type'].append(t['translator_type'])
-                    data['protected'].append(t['protected'])
-                    data['verified'].append(t['verified'])
-                    data['followers_count'].append(t['followers_count'])
-                    data['friends_count'].append(t['friends_count'])
-                    data['listed_count'].append(t['listed_count'])
-                    data['favourites_count'].append(t['favourites_count'])
-                    data['statuses_count'].append(t['statuses_count'])
-                    data['created_at'].append(t['created_at'])
-                    data['utc_offset'].append(t['utc_offset'])
-                    data['time_zone'].append(t['time_zone'])
-                    data['geo_enabled'].append(t['geo_enabled'])
-                    data['lang'].append(t['lang'])
-                    data['contributors_enabled'].append(t['contributors_enabled'])
-                    data['is_translator'].append(t['is_translator'])
-                    data['profile_background_image_url'].append(t['profile_background_image_url'])
-                    data['profile_background_tile'].append(t['profile_background_tile'])
-                    data['profile_use_background_image'].append(t['profile_use_background_image'])
-                    data['profile_image_url'].append(t['profile_image_url'])
-                    data['profile_image_url_https'].append(t['profile_image_url_https'])
-                    data['status_text'].append(t['status']['text'])
-                    data['status_source'].append(t['status']['source'])
-                    data['status_coordinates'].append(t['status']['coordinates'])
-                    data['status_lang'].append(t['status']['lang'])
-                    
-                    if 'possibly_sensitive' in t['status'].keys():
-                         data['status_possibly_sensitive'].append(t['status']['possibly_sensitive'])
-                    else: 
-                        data['status_possibly_sensitive'].append(False)
-                       
-                    
-                    if 'retweeted_status' in t['status'].keys():
-                        data['status_isretweet'].append(True)
-                    else: 
-                        data['status_isretweet'].append(False)
-        
-    df = pd.DataFrame(data)
-    if to_csv:
-        df.to_csv(file_prefix + '_parsedUserData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
-                  index = False , encoding = 'utf-8')
-    else:
-        return(df)
+#def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
+#    """
+#    This parses 'tweet' json to a pandas dataFrame.
+#    """
+#    import pandas as pd
+#    import json, time
+#    
+#    files = [files]
+#    data = { "id_str" : [],
+#            "name" : [],
+#            "screen_name" : [],
+#            "location" : [],
+#            "url" : [],
+#            "description" : [],
+#            "translator_type" : [],
+#            "protected" : [],
+#            "verified" : [],
+#            "followers_count" : [],
+#            "friends_count" : [],
+#            "listed_count" : [],
+#            "favourites_count" : [],
+#            "statuses_count" : [],
+#            "created_at" : [],
+#            "utc_offset" : [],
+#            "time_zone" : [],
+#            "geo_enabled" : [],
+#            "lang" : [],
+#            "contributors_enabled" : [],
+#            "is_translator" : [],
+#            "profile_background_image_url" : [],
+#            "profile_background_tile" : [],
+#            "profile_use_background_image" : [],
+#            "profile_image_url" : [],
+#            "profile_image_url_https" : [],
+#            "status_text" : [],
+#            "status_source" : [],
+#            "status_coordinates" : [],
+#            "status_possibly_sensitive" : [],
+#             "status_isretweet" : [],
+#             "status_lang" : []
+#    }
+#    for f in files:
+#        infile = open(f, 'r')
+#        for line in infile:
+#            if line != '\n' :
+#                t = json.loads(line)
+#                if 'status' in t.keys():
+#                    data['id_str'].append(t['id_str'])
+#                    data['name'].append(t['name'])
+#                    data['screen_name'].append(t['screen_name'])
+#                    data['location'].append(t['location'])
+#                    data['url'].append(t['url'])
+#                    data['description'].append(t['description'])
+#                    data['translator_type'].append(t['translator_type'])
+#                    data['protected'].append(t['protected'])
+#                    data['verified'].append(t['verified'])
+#                    data['followers_count'].append(t['followers_count'])
+#                    data['friends_count'].append(t['friends_count'])
+#                    data['listed_count'].append(t['listed_count'])
+#                    data['favourites_count'].append(t['favourites_count'])
+#                    data['statuses_count'].append(t['statuses_count'])
+#                    data['created_at'].append(t['created_at'])
+#                    data['utc_offset'].append(t['utc_offset'])
+#                    data['time_zone'].append(t['time_zone'])
+#                    data['geo_enabled'].append(t['geo_enabled'])
+#                    data['lang'].append(t['lang'])
+#                    data['contributors_enabled'].append(t['contributors_enabled'])
+#                    data['is_translator'].append(t['is_translator'])
+#                    data['profile_background_image_url'].append(t['profile_background_image_url'])
+#                    data['profile_background_tile'].append(t['profile_background_tile'])
+#                    data['profile_use_background_image'].append(t['profile_use_background_image'])
+#                    data['profile_image_url'].append(t['profile_image_url'])
+#                    data['profile_image_url_https'].append(t['profile_image_url_https'])
+#                    data['status_text'].append(t['status']['text'])
+#                    data['status_source'].append(t['status']['source'])
+#                    data['status_coordinates'].append(t['status']['coordinates'])
+#                    data['status_lang'].append(t['status']['lang'])
+#                    
+#                    if 'possibly_sensitive' in t['status'].keys():
+#                         data['status_possibly_sensitive'].append(t['status']['possibly_sensitive'])
+#                    else: 
+#                        data['status_possibly_sensitive'].append(False)
+#                       
+#                    
+#                    if 'retweeted_status' in t['status'].keys():
+#                        data['status_isretweet'].append(True)
+#                    else: 
+#                        data['status_isretweet'].append(False)
+#        
+#    df = pd.DataFrame(data)
+#    if to_csv:
+#        df.to_csv(file_prefix + '_parsedUserData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+#                  index = False , encoding = 'utf-8')
+#    else:
+#        return(df)
 #For testing
 
 #import json
