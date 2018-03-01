@@ -282,7 +282,6 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
                     data['status_lang'].append(t['lang'])
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
-                    data['retweet_id'].append(t['retweeted_status']['user'][name])
                     data['reply_to_id'].append(t['in_reply_to_'+name])
             
                     if 'possibly_sensitive' in t.keys():
@@ -292,6 +291,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
             
             
                     if 'retweeted_status' in t.keys():
+                        data['retweet_id'].append(t['retweeted_status']['user'][name])
                         data['status_isretweet'].append(True)
                     else:
                         data['status_isretweet'].append(False)
