@@ -148,6 +148,33 @@ def extract_retweet_network(files, file_prefix = 'twitter', name = 'id_str', to_
                   index = False , encoding = 'utf-8', columns = ['retweeter', 'retweeted', 'tweet_id','date'])
     else:
         return(df[['retweeter', 'retweeted', 'tweet_id','date']])
+#%%     
+def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
+    """
+   Creates reply edgelist.  Can return data.frame or write to csv.  
+   
+    """
+    import json
+    import pandas as pd
+    import time
+    if type(files) != 'list':
+       files = [files]
+    final = {'date': [],'tweet_id': [],'reply_from': [], 'reply_to': [] }
+    for f in files:
+        infile = open(f, 'r')
+        for line in infile:
+            tweet = json.loads(line)
+            if 'retweeted_status' in tweet.keys():
+                final['reply_from'].append(tweet['user'][name])
+                final['reply_to'].append(tweet['in_reply_to_'+name])
+                final['tweet_id'].append(tweet['id_str'])
+                final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_replyNetwork_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+                  index = False , encoding = 'utf-8', columns = ['date','tweet_id', 'reply_from', 'reply_to'])
+    else:
+        return(df[['date','tweet_id', 'reply_from', 'reply_to']])
 #%%
 def convert_dates(date_list):
     """
