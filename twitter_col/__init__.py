@@ -204,9 +204,11 @@ def get_all_network_files( files, file_prefix = 'twitter', name = 'id_str'):
     extract_retweet_network(files, file_prefix=file_prefix, name=name, to_csv=True)
 #%%
     
-def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
+def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'id_str'):
     """
-    This parses 'tweet' json to a pandas dataFrame.
+    This parses 'tweet' json to a pandas dataFrame. 'name' should be either
+    'id_str' or 'screen_name'.  This will choose which object is selected for
+    reply and retweet id.
     """
     import pandas as pd
     import json, time
@@ -239,7 +241,9 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
          "status_isretweet" : [],
           "status_lang" : [],
           "status_id" : [],
-          "status_created_at": []
+          "status_created_at": [],
+          "retweet_id": [],
+          "reply_to_id": []
           }
     for f in files:
         infile = open(f, 'r')
@@ -278,6 +282,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                     data['status_lang'].append(t['lang'])
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
+                    data['retweet_id'].append(t['retweeted_status']['user'][name])
+                    data['reply_to_id'].append(t['in_reply_to_'+name])
             
                     if 'possibly_sensitive' in t.keys():
                          data['status_possibly_sensitive'].append(t['possibly_sensitive'])
