@@ -31,7 +31,7 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
     import json
     import pandas as pd
     import time
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'date': [],'tweet_id': [],'mention': [], 'user': [] }
     for f in files:
@@ -164,9 +164,9 @@ def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_cs
         infile = open(f, 'r')
         for line in infile:
             tweet = json.loads(line)
-            if 'retweeted_status' in tweet.keys():
+            if tweet['in_reply_to_user_id_str'] != None:
                 final['reply_from'].append(tweet['user'][name])
-                final['reply_to'].append(tweet['in_reply_to_'+name])
+                final['reply_to'].append(tweet['iin_reply_to_user_id_str'])
                 final['tweet_id'].append(tweet['id_str'])
                 final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
@@ -213,7 +213,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
     import pandas as pd
     import json, time
     
-    files = [files]
+    if not isinstance(files, list):
+       files = [files]
     data = { "id_str" : [],
         "name" : [],
         "screen_name" : [],
@@ -282,7 +283,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
                     data['status_lang'].append(t['lang'])
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
-                    data['reply_to_id'].append(t['in_reply_to_'+name])
+                    data['reply_to_id'].append(t['in_reply_to_screen_name'])
             
                     if 'possibly_sensitive' in t.keys():
                          data['status_possibly_sensitive'].append(t['possibly_sensitive'])
@@ -303,7 +304,37 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
                   index = False , encoding = 'utf-8')
     else:
         return(df)
+        
 
+#%%
+        
+def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv = True):
+    import pandas as pd
+    import json
+
+
+    From = []
+    To = []
+    
+    infile = open(file, 'r')
+    for line in infile:
+        tweet = json.loads(line)
+        m = get_mention(tweet, kind = 'id_str')
+        if len(m) > 0:
+             for mention in m:
+                 From.append(tweet['id_str'])
+                 To.append(mention)
+        if tweet['in_reply_to_user_id_str'] != None:
+             From.append(tweet['in_reply_to_user_id_str'])
+             To.append(tweet['id_str'])
+        if 'retweeted_status' in tweet.keys():
+             From.append(tweet['user']['id_str'])
+             To.append(tweet['retweeted_status']['user']['id_str'])
+             
+    data = {'from': From,
+            'to': To}
+    df = pd.DataFrame(data)
+    df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
