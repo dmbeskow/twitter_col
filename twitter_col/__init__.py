@@ -204,7 +204,7 @@ def get_all_network_files( files, file_prefix = 'twitter', name = 'id_str'):
     extract_retweet_network(files, file_prefix=file_prefix, name=name, to_csv=True)
 #%%
     
-def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'id_str'):
+def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
     """
     This parses 'tweet' json to a pandas dataFrame. 'name' should be either
     'id_str' or 'screen_name'.  This will choose which object is selected for
@@ -244,7 +244,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
           "status_id" : [],
           "status_created_at": [],
           "retweet_id": [],
-          "reply_to_id": []
+          "reply_to_user_id": [],
+          "reply_to_status_id": []
           }
     for f in files:
         infile = open(f, 'r')
@@ -283,7 +284,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
                     data['status_lang'].append(t['lang'])
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
-                    data['reply_to_id'].append(t['in_reply_to_screen_name'])
+                    data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
+                    data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
             
                     if 'possibly_sensitive' in t.keys():
                          data['status_possibly_sensitive'].append(t['possibly_sensitive'])
@@ -292,7 +294,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, name = 'i
             
             
                     if 'retweeted_status' in t.keys():
-                        data['retweet_id'].append(t['retweeted_status']['user'][name])
+                        data['retweet_id'].append(t['retweeted_status']['user']['id_str'])
                         data['status_isretweet'].append(True)
                     else:
                         data['status_isretweet'].append(False)
