@@ -298,7 +298,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                         data['status_isretweet'].append(True)
                     else:
                         data['status_isretweet'].append(False)
-                        data['retweet_id'].append(None)
+                        data['retweet_status_id'].append(None)
         
     df = pd.DataFrame(data)
     if to_csv:
