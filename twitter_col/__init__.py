@@ -315,12 +315,13 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
     import json
     import gzip
     import progressbar
+    import io
 
     From = []
     To = []
     
     if '.gz' in file:
-        infile = gzip.open(file, 'r')
+        infile = io.TextIOWrapper(gzip.open(file, 'r'))
     else:
         infile = open(file, 'r')
     bar = progressbar.ProgressBar()
