@@ -314,17 +314,18 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
     import pandas as pd
     import json
     import gzip
+    import progressbar
 
     From = []
     To = []
     
     if '.gz' in file:
-        with gzip.GzipFile(file, 'r') as fin:
-            infile = json.loads(fin.read().decode('utf-8'))
-#        infile = gzip.open(file, 'rb')
+        with gzip.open(file, 'rt') as f:
+            infile = f.read()
     else:
         infile = open(file, 'r')
-    for line in infile:
+    bar = progressbar.ProgressBar()
+    for line in bar(infile):
         tweet = json.loads(line)
         m = get_mention(tweet, kind = 'id_str')
         if len(m) > 0:
