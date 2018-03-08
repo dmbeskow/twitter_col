@@ -313,12 +313,15 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
 def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv = True):
     import pandas as pd
     import json
-
+    import gzip
 
     From = []
     To = []
     
-    infile = open(file, 'r')
+    if '.gz' in file:
+        infile = gzip.open(file, 'r')
+    else:
+        infile = open(file, 'r')
     for line in infile:
         tweet = json.loads(line)
         m = get_mention(tweet, kind = 'id_str')
