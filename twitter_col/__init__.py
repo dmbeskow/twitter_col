@@ -28,14 +28,16 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
    Creates mention edgelist.  Can return data.frame or write to csv.  
    
     """
-    import json
+    import json, gzip, io, time
     import pandas as pd
-    import time
     if not isinstance(files, list):
        files = [files]
     final = {'date': [],'tweet_id': [],'mention': [], 'user': [] }
     for f in files:
-        infile = open(f, 'r')
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
         for line in infile:
             tweet = json.loads(line)
             m = get_mention(tweet, kind = name)
@@ -61,14 +63,16 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
    Can return data.frame or write to csv.  
    
     """
-    import json
+    import json, io, gzip, time
     import pandas as pd
-    import time
     if type(files) != 'list':
        files = [files]
     final = {'date': [],'hashtag': [], 'user': [] , 'tweet_id': []}
     for f in files:
-        infile = open(f, 'r')
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
         for line in infile:
             tweet = json.loads(line)
             h = get_hash(tweet)
@@ -93,9 +97,8 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
    Can return data.frame or write to csv.  
    
     """
-    import json
+    import json, io, gzip, time
     import pandas as pd
-    import time
     import itertools
     import progressbar
     if type(files) != 'list':
@@ -103,7 +106,10 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
     final = {'hash1': [],'hash2': [], 'user': [] , 'tweet_id': [], 'date':  []}
     bar = progressbar.ProgressBar()
     for f in bar(files):
-        infile = open(f, 'r')
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
         for line in infile:
             tweet = json.loads(line)
             h = get_hash(tweet)
@@ -127,14 +133,16 @@ def extract_retweet_network(files, file_prefix = 'twitter', name = 'id_str', to_
    Creates retweet edgelist.  Can return data.frame or write to csv.  
    
     """
-    import json
     import pandas as pd
-    import time
+    import time, json, io, gzip
     if type(files) != 'list':
        files = [files]
     final = {'date': [],'tweet_id': [],'retweeter': [], 'retweeted': [] }
     for f in files:
-        infile = open(f, 'r')
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
         for line in infile:
             tweet = json.loads(line)
             if 'retweeted_status' in tweet.keys():
@@ -154,14 +162,16 @@ def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_cs
    Creates reply edgelist.  Can return data.frame or write to csv.  
    
     """
-    import json
     import pandas as pd
-    import time
+    import time, json, io, gzip
     if type(files) != 'list':
        files = [files]
     final = {'date': [],'tweet_id': [],'reply_from': [], 'reply_to': [] }
     for f in files:
-        infile = open(f, 'r')
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
         for line in infile:
             tweet = json.loads(line)
             if tweet['in_reply_to_user_id_str'] != None:
@@ -211,7 +221,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
     reply and retweet id.
     """
     import pandas as pd
-    import json, time
+    import json, time, io, gzip
     
     if not isinstance(files, list):
        files = [files]
@@ -248,7 +258,10 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
           "reply_to_status_id": []
           }
     for f in files:
-        infile = open(f, 'r')
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
         for line in infile:
             if line != '\n':
                 t = json.loads(line)
@@ -340,7 +353,7 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
         if 'retweeted_status' in tweet.keys():
              From.append(tweet['user']['id_str'])
              To.append(tweet['retweeted_status']['user']['id_str'])
-             
+    infile.close()        
     data = {'from': From,
             'to': To}
     df = pd.DataFrame(data)
