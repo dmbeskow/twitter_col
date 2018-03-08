@@ -325,6 +325,8 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
         infile = open(file, 'r')
     bar = progressbar.ProgressBar()
     for line in bar(infile):
+        if line == '\n':
+            continue
         tweet = json.loads(line)
         m = get_mention(tweet, kind = 'id_str')
         if len(m) > 0:
