@@ -320,8 +320,7 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
     To = []
     
     if '.gz' in file:
-        with gzip.open(file, 'rt') as f:
-            infile = f.read()
+        infile = gzip.open(file, 'r')
     else:
         infile = open(file, 'r')
     bar = progressbar.ProgressBar()
