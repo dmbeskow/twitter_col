@@ -319,7 +319,9 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
     To = []
     
     if '.gz' in file:
-        infile = gzip.open(file, 'rb')
+        with gzip.GzipFile(file, 'r') as fin:
+            infile = json.loads(fin.read().decode('utf-8'))
+#        infile = gzip.open(file, 'rb')
     else:
         infile = open(file, 'r')
     for line in infile:
