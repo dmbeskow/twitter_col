@@ -221,6 +221,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
     reply and retweet id.
     """
     import pandas as pd
+    pd.set_option('max_colwidth',1000)
     import json, time, io, gzip
     
     if not isinstance(files, list):
