@@ -313,7 +313,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                         data['status_isretweet'].append(False)
                         data['retweet_status_id'].append(None)
         
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, dtype = str)
     if to_csv:
         df.to_csv(file_prefix + '_parsedTweetData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
                   index = False , encoding = 'utf-8')
