@@ -292,7 +292,6 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                     data['lang'].append(t['user']['lang'])
                     data['contributors_enabled'].append(t['user']['contributors_enabled'])
                     data['is_translator'].append(t['user']['is_translator'])
-                    data['status_text'].append(t['text'])
                     data['status_source'].append(t['source'])
                     data['status_coordinates'].append(t['coordinates'])
                     data['status_lang'].append(t['lang'])
@@ -300,6 +299,12 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                     data['status_created_at'].append(t['created_at'])
                     data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
                     data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
+                    
+                    if 'extended_tweet' in t.keys():
+                        if 'full_text' in t['extended_tweet']:
+                            data['status_text'].append(t['extended_tweet']['full_text'])
+                    else:
+                        data['status_text'].append(t['text'])
             
                     if 'possibly_sensitive' in t.keys():
                          data['status_possibly_sensitive'].append(t['possibly_sensitive'])
