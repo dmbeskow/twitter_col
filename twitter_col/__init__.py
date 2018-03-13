@@ -395,6 +395,40 @@ def fetch_profiles(api, screen_names = [], ids = []):
                 raise e
         print("Batch", batch_idx)
     return profiles 
+
+#%%
+
+def rehydrate(api,  ids = []):
+    """
+    I copied this from:
+        https://github.com/unitedstates/congress-legislators/blob/master/scripts/social/twitter.py
+        
+    A wrapper method around tweepy.API.lookup_users that handles the batch lookup of
+      Tweet IDs. 
+    Returns: a list of dicts representing Twitter profiles
+    """
+    import tweepy
+    TWITTER_PROFILE_BATCH_SIZE = 100
+    from math import ceil
+    
+    profiles = []
+    key, lookups = ['user_ids', ids] 
+    for batch_idx in range(ceil(len(lookups) / TWITTER_PROFILE_BATCH_SIZE)):
+        offset = batch_idx * TWITTER_PROFILE_BATCH_SIZE
+        # break lookups list into batches of TWITTER_PROFILE_BATCH_SIZE
+        batch = lookups[offset:(offset + TWITTER_PROFILE_BATCH_SIZE)]
+        try:
+            for user in api.lookup_status(**{key: batch}):
+                profiles.append(user._json)
+        # catch situation in which none of the names in the batch are found
+        # or else Tweepy will error out
+        except tweepy.error.TweepError as e:
+            if e.response.status_code == 404:
+                pass
+            else: # some other error, raise the exception
+                raise e
+        print("Batch", batch_idx)
+    return profiles 
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
