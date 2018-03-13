@@ -412,7 +412,7 @@ def rehydrate(api,  ids = []):
     from math import ceil
     
     profiles = []
-    key, lookups = ['user_ids', ids] 
+    key, lookups = ['id', ids] 
     for batch_idx in range(ceil(len(lookups) / TWITTER_PROFILE_BATCH_SIZE)):
         offset = batch_idx * TWITTER_PROFILE_BATCH_SIZE
         # break lookups list into batches of TWITTER_PROFILE_BATCH_SIZE
