@@ -214,15 +214,16 @@ def get_all_network_files( files, file_prefix = 'twitter', name = 'id_str'):
     extract_retweet_network(files, file_prefix=file_prefix, name=name, to_csv=True)
 #%%
     
-def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
+def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment = False):
     """
     This parses 'tweet' json to a pandas dataFrame. 'name' should be either
     'id_str' or 'screen_name'.  This will choose which object is selected for
     reply and retweet id.
     """
     import pandas as pd
-    pd.set_option('max_colwidth',1000)
+    from textblob import TextBlob
     import json, time, io, gzip
+    import progressbar
     
     if not isinstance(files, list):
        files = [files]
@@ -263,7 +264,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
         else:
             infile = open(f, 'r')
-        for line in infile:
+        bar = progressbar.ProgressBar()
+        for line in bar(infile):
             if line != '\n':
                 t = json.loads(line)
                 if 'status' in t.keys():
@@ -303,6 +305,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                     if 'extended_tweet' in t.keys():
                         if 'full_text' in t['extended_tweet']:
                             data['status_text'].append(t['extended_tweet']['full_text'])
+                    elif 'full_text' in t.keys():
+                        data['status_text'].append(t['full_text'])
                     else:
                         data['status_text'].append(t['text'])
             
@@ -320,6 +324,15 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False):
                         data['retweet_status_id'].append(None)
         
     df = pd.DataFrame(data, dtype = str)
+    
+    if sentiment:
+        sent = []
+        for t in df['status_text'].tolist():
+            text = TextBlob(t)
+            sent.append(text.sentiment.polarity)
+    df['sentiment_score'] = sent
+    df['sentiment_label'] = df['sentiment_score'].apply(get_sensitivity)
+            
     if to_csv:
         df.to_csv(file_prefix + '_parsedTweetData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
                   index = False , encoding = 'utf-8')
@@ -402,7 +415,14 @@ def fetch_profiles(api, screen_names = [], ids = []):
     return profiles 
 
 #%%
-
+def get_sensitivity(value):
+    if value < 0:
+        return("negative")
+    if value == 0:
+        return('neutral')
+    else:
+        return('positive')
+#%%
 def rehydrate(api,  ids = []):
     """
     I copied this from:
@@ -434,6 +454,8 @@ def rehydrate(api,  ids = []):
                 raise e
         print("Batch", batch_idx)
     return profiles 
+
+
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
