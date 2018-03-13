@@ -418,7 +418,7 @@ def rehydrate(api,  ids = []):
         # break lookups list into batches of TWITTER_PROFILE_BATCH_SIZE
         batch = lookups[offset:(offset + TWITTER_PROFILE_BATCH_SIZE)]
         try:
-            for user in api.lookup_status(**{key: batch}):
+            for user in api.statuses_lookup(**{key: batch}, tweet_mode='extended'):
                 profiles.append(user._json)
         # catch situation in which none of the names in the batch are found
         # or else Tweepy will error out
