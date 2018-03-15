@@ -249,7 +249,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
         "is_translator" : [],
         "status_text" : [],
         "status_source" : [],
-        "status_coordinates" : [],
+        "lat" : [],
+        "lon" : [],
         "status_possibly_sensitive" : [],
          "status_isretweet" : [],
           "status_lang" : [],
@@ -295,7 +296,6 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
                     data['contributors_enabled'].append(t['user']['contributors_enabled'])
                     data['is_translator'].append(t['user']['is_translator'])
                     data['status_source'].append(t['source'])
-                    data['status_coordinates'].append(t['coordinates'])
                     data['status_lang'].append(t['lang'])
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
@@ -322,6 +322,15 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
                     else:
                         data['status_isretweet'].append(False)
                         data['retweet_status_id'].append(None)
+                        
+                    coords = t["coordinates"]
+                    if coords is not None:
+                        data['lon'].append(coords["coordinates"][0])
+                        data['lat'].append(coords["coordinates"][1])
+                    else:
+                        data['lon'].append(None)
+                        data['lat'].append(None)
+
         
     df = pd.DataFrame(data, dtype = str)
     
