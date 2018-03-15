@@ -330,8 +330,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
         for t in df['status_text'].tolist():
             text = TextBlob(t)
             sent.append(text.sentiment.polarity)
-    df['sentiment_score'] = sent
-    df['sentiment_label'] = df['sentiment_score'].apply(get_sensitivity)
+        df['sentiment_score'] = sent
+        df['sentiment_label'] = df['sentiment_score'].apply(get_sensitivity)
             
     if to_csv:
         df.to_csv(file_prefix + '_parsedTweetData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
