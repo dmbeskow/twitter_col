@@ -360,6 +360,8 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
 
     From = []
     To = []
+    Type = []
+    Time = []
     
     if '.gz' in file:
         infile = io.TextIOWrapper(gzip.open(file, 'r'))
@@ -370,20 +372,30 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
         if line == '\n':
             continue
         tweet = json.loads(line)
+        dateTime = tweet['created_at']
         m = get_mention(tweet, kind = 'id_str')
         if len(m) > 0:
              for mention in m:
                  From.append(tweet['id_str'])
                  To.append(mention)
+                 Type.append('mention')
+                 Time.append(dateTime)
         if tweet['in_reply_to_user_id_str'] != None:
              From.append(tweet['in_reply_to_user_id_str'])
              To.append(tweet['id_str'])
+             Type.append('reply')
+             Time.append(dateTime)
         if 'retweeted_status' in tweet.keys():
              From.append(tweet['user']['id_str'])
              To.append(tweet['retweeted_status']['user']['id_str'])
+             Type.append('retweet')
+             Time.append(dateTime)
     infile.close()        
     data = {'from': From,
-            'to': To}
+            'to': To,
+            'type': Type,
+            'created_at': Time}
+    
     df = pd.DataFrame(data)
     df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
 #%%
