@@ -132,7 +132,7 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
     else:
         return(df[['user', 'url', 'status_id','date']])
 #%%     
-def extract_media(files, file_prefix = 'twitter',  file_prefix = 'twitter',to_csv = True, name = 'id_str'):
+def extract_media(files,   file_prefix = 'twitter',to_csv = True, name = 'id_str'):
     """
    Creates  csv containing all URLS in a set of tweets 
    
