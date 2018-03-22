@@ -151,16 +151,17 @@ def extract_media(files,   file_prefix = 'twitter',to_csv = True, name = 'id_str
         bar =  progressbar.ProgressBar()
         for line in bar(infile):
             tweet = json.loads(line)
-            if len(tweet['entities']['media']) > 0:
-                for m in tweet['entities']['media']:
-                    final['user'].append(tweet['user'][name])
-                    final['type'].append(m['type'])
-                    final['display_url'].append(m['display_url'])
-                    final['expanded_url'].append(m['expanded_url'])
-                    final['media_url'].append(m['media_url'])
-                    final['media_url_https'].append(m['media_url_https'])
-                    final['status_id'].append(tweet['id_str'])
-                    final['date'].append(tweet['created_at'])
+            if 'extended_entities' in tweet.keys():
+                if 'media' in tweet['extended_entities']:
+                    for m in tweet['extended_entities']['media']:
+                        final['user'].append(tweet['user'][name])
+                        final['type'].append(m['type'])
+                        final['display_url'].append(m['display_url'])
+                        final['expanded_url'].append(m['expanded_url'])
+                        final['media_url'].append(m['media_url'])
+                        final['media_url_https'].append(m['media_url_https'])
+                        final['status_id'].append(tweet['id_str'])
+                        final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_media_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
