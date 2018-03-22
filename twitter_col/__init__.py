@@ -33,6 +33,7 @@ def get_urls(tweet):
         for u in tweet['entities']['urls']:
             url.append(u['expanded_url'])
     return(url)
+    
 #%%
 def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
     """
@@ -130,7 +131,44 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
                   index = False ,  encoding = 'utf-8', columns = ['user', 'url', 'status_id','date'])
     else:
         return(df[['user', 'url', 'status_id','date']])
-        
+#%%     
+def extract_media(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'):
+    """
+   Creates  csv containing all URLS in a set of tweets 
+   
+    """
+    import json, io, gzip, time
+    import pandas as pd
+    import progressbar
+    if type(files) != 'list':
+       files = [files]
+    final = {'date': [],'type':[] , 'display_url': [], 'expanded_url': [], 'media_url': [], 'media_url_https': [],  'user': [] , 'status_id': []}
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar =  progressbar.ProgressBar()
+        for line in bar(infile):
+            tweet = json.loads(line)
+            if len(tweet['media']) > 0:
+                for m in tweet['media']:
+                    final['user'].append(tweet['user'][name])
+                    final['type'].append(m['type'])
+                    final['display_url'].append(m['display_url'])
+                    final['expanded_url'].append(m['expanded_url'])
+                    final['media_url'].append(m['media_url'])
+                    final['media_url_https'].append(m['media_url_https'])
+                    final['status_id'].append(tweet['id_str'])
+                    final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_media_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+                  index = False ,  encoding = 'utf-8', columns = ['user', 'type','display_url',
+                  'expanded_url','media_url','media_url_https','user','status_id','date'])
+    else:
+        return(df[['user', 'type','display_url',
+                  'expanded_url','media_url','media_url_https','user','status_id','date']])        
 #%%
 def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str', 
                      to_csv = True):
