@@ -23,6 +23,17 @@ def get_mention(tweet, kind = 'id_str'):
     return(men)
     
 #%%
+def get_urls(tweet):
+    """
+    Returns list of expanded urls in a tweet.  If no urls, returns an
+    empty list.
+    """
+    url = []
+    if len(tweet['entities']['urls']) > 0:
+        for u in tweet['entities']['urls']:
+            url.append(u['expanded_url'])
+    return(url)
+#%%
 def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
     """
    Creates mention edgelist.  Can return data.frame or write to csv.  
@@ -88,6 +99,37 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
                   index = False ,  encoding = 'utf-8', columns = ['user', 'hashtag', 'tweet_id','date'])
     else:
         return(df[['user', 'hashtag', 'tweet_id','date']])
+#%%     
+def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'):
+    """
+   Creates  csv containing all URLS in a set of tweets 
+   
+    """
+    import json, io, gzip, time
+    import pandas as pd
+    if type(files) != 'list':
+       files = [files]
+    final = {'date': [],'url': [], 'user': [] , 'status_id': []}
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        for line in infile:
+            tweet = json.loads(line)
+            u = get_urls(tweet)
+            if len(u) > 0:
+                for url in u:
+                    final['user'].append(tweet['user'][name])
+                    final['url'].append(url)
+                    final['status_id'].append(tweet['id_str'])
+                    final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_urls_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+                  index = False ,  encoding = 'utf-8', columns = ['user', 'url', 'status_id','date'])
+    else:
+        return(df[['user', 'url', 'status_id','date']])
         
 #%%
 def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str', 
