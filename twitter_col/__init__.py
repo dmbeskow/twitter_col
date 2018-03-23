@@ -35,6 +35,46 @@ def get_urls(tweet):
     return(url)
     
 #%%
+def get_reply_conversation(files, status_ids):
+    """
+    Recursively extracts replies and replies to replies in order to pull all
+    replies that are connected to a given status_id(s)
+    """
+    import json, gzip, io
+    import pandas as pd
+    if not isinstance(files, list):
+       files = [files]
+    data = {'status_id': [],
+            'reply_to_status_id':[]}
+
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        for line in infile:
+            tweet = json.loads(line)
+            data['status_id'].append(tweet['id_str'])
+            data['reply_to_status_id'].append(tweet['in_reply_to_status_id_str'])
+    
+    df = pd.DataFrame(data, dtype = str)
+    
+    conversation = []
+    reply = df[df['reply_to_status_id'].isin(status_ids)]
+    conversation.extend(reply['status_id'].tolist())
+    count = 1
+    while len(reply.index) > 0:
+        reply = df[df['reply_to_status_id'].isin(reply['status_id'])]
+        conversation.extend(reply['status_id'].tolist())
+        count += 1
+        
+    print('Total of',count,'levels in the conversation')
+        
+    return(conversation)
+        
+    
+    
+#%%
 def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
     """
    Creates mention edgelist.  Can return data.frame or write to csv.  
