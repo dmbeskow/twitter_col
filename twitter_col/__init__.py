@@ -42,6 +42,7 @@ def get_reply_conversation(files, status_ids):
     """
     import json, gzip, io
     import pandas as pd
+    import progressbar
     if not isinstance(files, list):
        files = [files]
     data = {'status_id': [],
@@ -52,7 +53,8 @@ def get_reply_conversation(files, status_ids):
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
         else:
             infile = open(f, 'r')
-        for line in infile:
+        bar = progressbar.ProgressBar()
+        for line in bar(infile):
             tweet = json.loads(line)
             data['status_id'].append(tweet['id_str'])
             data['reply_to_status_id'].append(tweet['in_reply_to_status_id_str'])
