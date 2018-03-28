@@ -119,7 +119,7 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
     """
     import json, io, gzip, time
     import pandas as pd
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'date': [],'hashtag': [], 'user': [] , 'tweet_id': []}
     for f in files:
@@ -604,7 +604,31 @@ def rehydrate(api,  ids = []):
         print("Batch", batch_idx)
     return profiles 
 
+#%%
+def check_inactive(api, uids):
+    """ Check inactive account, one by one.
+    Parameters
+    ---------------
+    uids : list
+        A list of inactive account
 
+    Returns
+    ----------
+        list of tuple (uid, reason). Where `uid` is the account id,
+        and `reason` is a string.
+    """
+    import progressbar
+    import tweepy
+    final = []
+    bar = progressbar.ProgressBar()
+    for uid in bar(uids):
+        try:
+            u = api.get_user(user_id=uid)
+            final.append( (uid,"Status OK"))
+        except tweepy.error.TweepError as e:
+            final.append((uid, e.reason))
+            
+    return(final)
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
