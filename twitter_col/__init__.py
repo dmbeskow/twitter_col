@@ -475,6 +475,9 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
 #%%
         
 def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv = True):
+    ''' Builds an agent x agent edgelist of a Tweet json (normal or gzipped) 
+        or of a tweet list.
+    '''
     import pandas as pd
     import json
     import gzip
@@ -487,10 +490,11 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
     Time = []
     ID = []
     
-    if '.gz' in file:
-        infile = io.TextIOWrapper(gzip.open(file, 'r'))
-    else:
-        infile = open(file, 'r')
+    if isinstance(file, str):
+        if '.gz' in file:
+            infile = io.TextIOWrapper(gzip.open(file, 'r'))
+        else:
+            infile = open(file, 'r')
     bar = progressbar.ProgressBar()
     for line in bar(infile):
         if line == '\n':
@@ -517,7 +521,8 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
              Type.append('retweet')
              Time.append(dateTime)
              ID.append(tweet['id_str'])
-    infile.close()        
+    if isinstance(file, str):
+        infile.close()        
     data = {'from': From,
             'to': To,
             'type': Type,
