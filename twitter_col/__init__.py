@@ -525,7 +525,10 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
             'status_id': ID}
     
     df = pd.DataFrame(data)
-    df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
+    if to_csv:
+        df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
+    else:
+        return(df)
 #%%
 
 def fetch_profiles(api, screen_names = [], ids = []):
@@ -628,6 +631,23 @@ def check_inactive(api, uids):
         except tweepy.error.TweepError as e:
             final.append((uid, e.reason))
             
+    return(final)
+    
+#%%
+def dedupe_twitter(list_of_tweets):
+    import progressbar
+    seen = {}
+    final = []
+    bar = progressbar.ProgressBar()
+    for tweet in bar(list_of_tweets):
+        try:
+            id = tweet["id"]
+            if id not in seen:
+                seen[id] = True
+                final.append(tweet)
+        except:
+            continue
+        
     return(final)
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
