@@ -474,9 +474,10 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
 
 #%%
         
-def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv = True):
-    ''' Builds an agent x agent edgelist of a Tweet json (normal or gzipped) 
-        or of a tweet list.
+def get_edgelist_file(file, mentions = True, replies = True, retweets = True, 
+                 urls = False, hashtags = False, to_csv = True):
+    ''' 
+    Builds an agent x agent edgelist of a Tweet json (normal or gzipped)
     '''
     import pandas as pd
     import json
@@ -490,11 +491,10 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
     Time = []
     ID = []
     
-    if isinstance(file, str):
-        if '.gz' in file:
-            infile = io.TextIOWrapper(gzip.open(file, 'r'))
-        else:
-            infile = open(file, 'r')
+    if '.gz' in file:
+        infile = io.TextIOWrapper(gzip.open(file, 'r'))
+    else:
+        infile = open(file, 'r')
     bar = progressbar.ProgressBar()
     for line in bar(infile):
         if line == '\n':
@@ -502,27 +502,43 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
         tweet = json.loads(line)
         dateTime = tweet['created_at']
         m = get_mention(tweet, kind = 'id_str')
-        if len(m) > 0:
+        if len(m) > 0 and mentions:
              for mention in m:
                  From.append(tweet['user']['id_str'])
                  To.append(mention)
                  Type.append('mention')
                  Time.append(dateTime)
                  ID.append(tweet['id_str'])
-        if tweet['in_reply_to_user_id_str'] != None:
+        if tweet['in_reply_to_user_id_str'] != None and replies:
              To.append(tweet['in_reply_to_user_id_str'])
              From.append(tweet['user']['id_str'])
              Type.append('reply')
              Time.append(dateTime)
              ID.append(tweet['id_str'])
-        if 'retweeted_status' in tweet.keys():
+        if 'retweeted_status' in tweet.keys() and retweets:
              From.append(tweet['user']['id_str'])
              To.append(tweet['retweeted_status']['user']['id_str'])
              Type.append('retweet')
              Time.append(dateTime)
              ID.append(tweet['id_str'])
-    if isinstance(file, str):
-        infile.close()        
+        u = get_urls(tweet)
+        if len(u) > 0 and urls:
+             for url in u:
+                 From.append(tweet['user']['id_str'])
+                 To.append(url)
+                 Type.append('url')
+                 Time.append(dateTime)
+                 ID.append(tweet['id_str'])
+        h = get_hash(tweet)
+        if len(h) > 0 and hashtags:
+             for Hash in h:
+                 From.append(tweet['user']['id_str'])
+                 To.append(Hash)
+                 Type.append('hashtag')
+                 Time.append(dateTime)
+                 ID.append(tweet['id_str'])
+
+    infile.close()        
     data = {'from': From,
             'to': To,
             'type': Type,
@@ -534,6 +550,73 @@ def get_edgelist(file, mentions = True, replies = True, retweets = True, to_csv 
         df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
     else:
         return(df)
+#%%
+        
+def get_edgelist_from_list(tweet_list, mentions = True, replies = True, retweets = True, 
+                 urls = False, hashtags = False, to_csv = True):
+    ''' 
+    Builds an agent x agent edgelist of a tweet list.
+    '''
+    import pandas as pd
+    import progressbar
+
+    From = []
+    To = []
+    Type = []
+    Time = []
+    ID = []
+    
+    bar = progressbar.ProgressBar()
+    for tweet in bar(tweet_list):
+        dateTime = tweet['created_at']
+        m = get_mention(tweet, kind = 'id_str')
+        if len(m) > 0 and mentions:
+             for mention in m:
+                 From.append(tweet['user']['id_str'])
+                 To.append(mention)
+                 Type.append('mention')
+                 Time.append(dateTime)
+                 ID.append(tweet['id_str'])
+        if tweet['in_reply_to_user_id_str'] != None and replies:
+             To.append(tweet['in_reply_to_user_id_str'])
+             From.append(tweet['user']['id_str'])
+             Type.append('reply')
+             Time.append(dateTime)
+             ID.append(tweet['id_str'])
+        if 'retweeted_status' in tweet.keys() and retweets:
+             From.append(tweet['user']['id_str'])
+             To.append(tweet['retweeted_status']['user']['id_str'])
+             Type.append('retweet')
+             Time.append(dateTime)
+             ID.append(tweet['id_str'])
+        u = get_urls(tweet)
+        if len(u) > 0 and urls:
+             for url in u:
+                 From.append(tweet['user']['id_str'])
+                 To.append(url)
+                 Type.append('url')
+                 Time.append(dateTime)
+                 ID.append(tweet['id_str'])
+        h = get_hash(tweet)
+        if len(h) > 0 and hashtags:
+             for Hash in h:
+                 From.append(tweet['user']['id_str'])
+                 To.append(Hash)
+                 Type.append('hashtag')
+                 Time.append(dateTime)
+                 ID.append(tweet['id_str'])
+      
+    data = {'from': From,
+            'to': To,
+            'type': Type,
+            'created_at': Time,
+            'status_id': ID}
+    
+    df = pd.DataFrame(data)
+#    if to_csv:
+#        df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
+#    else:
+    return(df)
 #%%
 
 def fetch_profiles(api, screen_names = [], ids = []):
