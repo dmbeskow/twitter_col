@@ -391,7 +391,10 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
         bar = progressbar.ProgressBar()
         for line in bar(infile):
             if line != '\n':
-                t = json.loads(line)
+                try:
+                    t = json.loads(line)
+                except:
+                    continue
                 if 'status' in t.keys():
                     temp = t['status']
                     getRid = t.pop('status', 'Entry not found')
