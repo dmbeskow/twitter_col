@@ -740,6 +740,64 @@ def dedupe_twitter(list_of_tweets):
             continue
         
     return(final)
+    
+#%%
+def extract_gender(files, to_csv = False):
+     """
+    This parses 'tweet' json to a pandas dataFrame. 'name' should be either
+    'id_str' or 'screen_name'.  This will choose which object is selected for
+    reply and retweet id.
+    """
+    import pandas as pd
+    import json, time, io, gzip
+    import gender_guesser.detector as gender
+    import progressbar
+    
+    if not isinstance(files, list):
+       files = [files]
+    data = { "status_id" : [],
+        "name" : [],
+        "screen_name" : [],
+        "id_str" : [],
+        "gender" : []
+          }
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar = progressbar.ProgressBar()
+        d = gender.Detector(case_sensitive=False)
+        for line in bar(infile):
+            if line != '\n':
+                try:
+                    t = json.loads(line)
+                except:
+                    continue
+                if 'status' in t.keys():
+                    temp = t['status']
+                    getRid = t.pop('status', 'Entry not found')
+                    temp['user'] = t
+                    t = temp
+                if 'user' in t.keys():
+                    name = tweet['user']['name']
+                    first_name = name.split(" ")[0]
+                    gender = d.get_gender(first_name)
+                    
+                    data['status_id'].append(t['id_str'])
+                    data['name'].append(t['user']['name'])
+                    data['screen_name'].append(t['user']['screen_name'])
+                    data['id_str'].append(t['user']['id_str'])
+                    data['gender'].append(gender)
+    df = pd.DataFrame(data)
+    if to_csv:
+        df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
+    else:
+        return(df)
+    
+    
+    
+
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
