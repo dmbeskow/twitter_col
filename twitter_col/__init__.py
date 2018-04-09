@@ -86,7 +86,7 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
     import pandas as pd
     if not isinstance(files, list):
        files = [files]
-    final = {'date': [],'tweet_id': [],'mention': [], 'user': [] }
+    final = {'date': [],'status_id': [],'mention': [], 'user': [] }
     for f in files:
         if '.gz' in f:
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
@@ -99,14 +99,14 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
                 for mention in m:
                     final['user'].append(tweet['user'][name])
                     final['mention'].append(mention)
-                    final['tweet_id'].append(tweet['id_str'])
+                    final['status_id'].append(tweet['id_str'])
                     final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
-                  index = False , encoding = 'utf-8', columns = ['user', 'mention', 'tweet_id','date'])
+                  index = False , encoding = 'utf-8', columns = ['user', 'mention', 'status_id','date'])
     else:
-        return(df[['user', 'mention', 'tweet_id','date']])
+        return(df[['user', 'mention', 'status_id','date']])
     
     
 #%%
@@ -121,7 +121,7 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
     import pandas as pd
     if not isinstance(files, list):
        files = [files]
-    final = {'date': [],'hashtag': [], 'user': [] , 'tweet_id': []}
+    final = {'date': [],'hashtag': [], 'user': [] , 'status_id': []}
     for f in files:
         if '.gz' in f:
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
@@ -134,14 +134,14 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
                 for hashtag in h:
                     final['user'].append(tweet['user'][name])
                     final['hashtag'].append(hashtag)
-                    final['tweet_id'].append(tweet['id_str'])
+                    final['status_id'].append(tweet['id_str'])
                     final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_hashtags_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
-                  index = False ,  encoding = 'utf-8', columns = ['user', 'hashtag', 'tweet_id','date'])
+                  index = False ,  encoding = 'utf-8', columns = ['user', 'hashtag', 'status_id','date'])
     else:
-        return(df[['user', 'hashtag', 'tweet_id','date']])
+        return(df[['user', 'hashtag', 'status_id','date']])
 #%%     
 def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'):
     """
@@ -226,7 +226,7 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
     import progressbar
     if type(files) != 'list':
        files = [files]
-    final = {'hash1': [],'hash2': [], 'user': [] , 'tweet_id': [], 'date':  []}
+    final = {'hash1': [],'hash2': [], 'user': [] , 'status_id': [], 'date':  []}
     bar = progressbar.ProgressBar()
     for f in bar(files):
         if '.gz' in f:
@@ -242,14 +242,14 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
                     final['user'].append(tweet['user'][name])
                     final['hash1'].append(pair[0])
                     final['hash2'].append(pair[1])
-                    final['tweet_id'].append(tweet['id_str'])
+                    final['status_id'].append(tweet['id_str'])
                     final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_hashComention_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
-                  index = False , encoding = 'utf-8', columns = ['user', 'hash1', 'hash2', 'tweet_id','date'])
+                  index = False , encoding = 'utf-8', columns = ['user', 'hash1', 'hash2', 'status_id','date'])
     else:
-        return(df[['user', 'hash1', 'hash2', 'tweet_id','date']])
+        return(df[['user', 'hash1', 'hash2', 'status_id','date']])
 #%%           
 def extract_retweet_network(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
     """
@@ -260,7 +260,7 @@ def extract_retweet_network(files, file_prefix = 'twitter', name = 'id_str', to_
     import time, json, io, gzip
     if type(files) != 'list':
        files = [files]
-    final = {'date': [],'tweet_id': [],'retweeter': [], 'retweeted': [] }
+    final = {'date': [],'status_id': [],'retweeter': [], 'retweeted': [] }
     for f in files:
         if '.gz' in f:
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
@@ -271,14 +271,14 @@ def extract_retweet_network(files, file_prefix = 'twitter', name = 'id_str', to_
             if 'retweeted_status' in tweet.keys():
                 final['retweeter'].append(tweet['user'][name])
                 final['retweeted'].append(tweet['retweeted_status']['user'][name])
-                final['tweet_id'].append(tweet['id_str'])
+                final['status_id'].append(tweet['id_str'])
                 final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_retweetNetwork_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
-                  index = False , encoding = 'utf-8', columns = ['retweeter', 'retweeted', 'tweet_id','date'])
+                  index = False , encoding = 'utf-8', columns = ['retweeter', 'retweeted', 'status_id','date'])
     else:
-        return(df[['retweeter', 'retweeted', 'tweet_id','date']])
+        return(df[['retweeter', 'retweeted', 'status_id','date']])
 #%%     
 def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
     """
@@ -289,7 +289,7 @@ def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_cs
     import time, json, io, gzip
     if type(files) != 'list':
        files = [files]
-    final = {'date': [],'tweet_id': [],'reply_from': [], 'reply_to': [] }
+    final = {'date': [],'status_id': [],'reply_from': [], 'reply_to': [] }
     for f in files:
         if '.gz' in f:
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
@@ -300,14 +300,14 @@ def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_cs
             if tweet['in_reply_to_user_id_str'] != None:
                 final['reply_from'].append(tweet['user'][name])
                 final['reply_to'].append(tweet['iin_reply_to_user_id_str'])
-                final['tweet_id'].append(tweet['id_str'])
+                final['status_id'].append(tweet['id_str'])
                 final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_replyNetwork_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
-                  index = False , encoding = 'utf-8', columns = ['date','tweet_id', 'reply_from', 'reply_to'])
+                  index = False , encoding = 'utf-8', columns = ['date','status_id', 'reply_from', 'reply_to'])
     else:
-        return(df[['date','tweet_id', 'reply_from', 'reply_to']])
+        return(df[['date','status_id', 'reply_from', 'reply_to']])
 #%%
 def convert_dates(date_list):
     """
