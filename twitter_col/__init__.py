@@ -150,7 +150,7 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
     """
     import json, io, gzip, time
     import pandas as pd
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'date': [],'url': [], 'user': [] , 'status_id': []}
     for f in files:
@@ -159,7 +159,10 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
         else:
             infile = open(f, 'r')
         for line in infile:
-            tweet = json.loads(line)
+            try:
+                tweet = json.loads(line)
+            except:
+                continue
             u = get_urls(tweet)
             if len(u) > 0:
                 for url in u:
