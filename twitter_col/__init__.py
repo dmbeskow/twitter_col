@@ -525,73 +525,63 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
           }
 
     bar = progressbar.ProgressBar()
-    for line in bar(List):
-        if line != '\n':
-            try:
-                t = json.loads(line)
-            except:
-                continue
-            if 'status' in t.keys():
-                temp = t['status']
-                getRid = t.pop('status', 'Entry not found')
-                temp['user'] = t
-                t = temp
-            if 'user' in t.keys():
-                data['id_str'].append(t['user']['id_str'])
-                data['name'].append(t['user']['name'])
-                data['screen_name'].append(t['user']['screen_name'])
-                data['location'].append(t['user']['location'])
-                data['url'].append(t['user']['url'])
-                data['description'].append(t['user']['description'])
-                data['protected'].append(t['user']['protected'])
-                data['verified'].append(t['user']['verified'])
-                data['followers_count'].append(t['user']['followers_count'])
-                data['friends_count'].append(t['user']['friends_count'])
-                data['listed_count'].append(t['user']['listed_count'])
-                data['favourites_count'].append(t['user']['favourites_count'])
-                data['statuses_count'].append(t['user']['statuses_count'])
-                data['created_at'].append(t['user']['created_at'])
-                data['utc_offset'].append(t['user']['utc_offset'])
-                data['time_zone'].append(t['user']['time_zone'])
-                data['geo_enabled'].append(t['user']['geo_enabled'])
-                data['lang'].append(t['user']['lang'])
-                data['contributors_enabled'].append(t['user']['contributors_enabled'])
-                data['is_translator'].append(t['user']['is_translator'])
-                data['status_source'].append(t['source'])
-                data['status_lang'].append(t['lang'])
-                data['status_id'].append(t['id'])
-                data['status_created_at'].append(t['created_at'])
-                data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
-                data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
+    for t in bar(List):
+        if 'user' in t.keys():
+            data['id_str'].append(t['user']['id_str'])
+            data['name'].append(t['user']['name'])
+            data['screen_name'].append(t['user']['screen_name'])
+            data['location'].append(t['user']['location'])
+            data['url'].append(t['user']['url'])
+            data['description'].append(t['user']['description'])
+            data['protected'].append(t['user']['protected'])
+            data['verified'].append(t['user']['verified'])
+            data['followers_count'].append(t['user']['followers_count'])
+            data['friends_count'].append(t['user']['friends_count'])
+            data['listed_count'].append(t['user']['listed_count'])
+            data['favourites_count'].append(t['user']['favourites_count'])
+            data['statuses_count'].append(t['user']['statuses_count'])
+            data['created_at'].append(t['user']['created_at'])
+            data['utc_offset'].append(t['user']['utc_offset'])
+            data['time_zone'].append(t['user']['time_zone'])
+            data['geo_enabled'].append(t['user']['geo_enabled'])
+            data['lang'].append(t['user']['lang'])
+            data['contributors_enabled'].append(t['user']['contributors_enabled'])
+            data['is_translator'].append(t['user']['is_translator'])
+            data['status_source'].append(t['source'])
+            data['status_lang'].append(t['lang'])
+            data['status_id'].append(t['id'])
+            data['status_created_at'].append(t['created_at'])
+            data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
+            data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
+            
+            if 'extended_tweet' in t.keys():
+                if 'full_text' in t['extended_tweet']:
+                    data['status_text'].append(t['extended_tweet']['full_text'])
+            elif 'full_text' in t.keys():
+                data['status_text'].append(t['full_text'])
+            else:
+                data['status_text'].append(t['text'])
+    
+            if 'possibly_sensitive' in t.keys():
+                 data['status_possibly_sensitive'].append(t['possibly_sensitive'])
+            else:
+                data['status_possibly_sensitive'].append(False)
+    
+    
+            if 'retweeted_status' in t.keys():
+                data['retweet_status_id'].append(t['retweeted_status']['id_str'])
+                data['status_isretweet'].append(True)
+            else:
+                data['status_isretweet'].append(False)
+                data['retweet_status_id'].append(None)
                 
-                if 'extended_tweet' in t.keys():
-                    if 'full_text' in t['extended_tweet']:
-                        data['status_text'].append(t['extended_tweet']['full_text'])
-                elif 'full_text' in t.keys():
-                    data['status_text'].append(t['full_text'])
-                else:
-                    data['status_text'].append(t['text'])
-        
-                if 'possibly_sensitive' in t.keys():
-                     data['status_possibly_sensitive'].append(t['possibly_sensitive'])
-                else:
-                    data['status_possibly_sensitive'].append(False)
-        
-        
-                if 'retweeted_status' in t.keys():
-                    data['retweet_status_id'].append(t['retweeted_status']['id_str'])
-                    data['status_isretweet'].append(True)
-                else:
-                    data['status_isretweet'].append(False)
-                    data['retweet_status_id'].append(None)
-                    
-                coords = t["coordinates"]
-                if coords is not None:
-                    data['lon'].append(coords["coordinates"][0])
-                    data['lat'].append(coords["coordinates"][1])
-                else:
-                    data['lon'].append(None)
-                    data['lat'].append(None)
+            coords = t["coordinates"]
+            if coords is not None:
+                data['lon'].append(coords["coordinates"][0])
+                data['lat'].append(coords["coordinates"][1])
+            else:
+                data['lon'].append(None)
+                data['lat'].append(None)
 
         
     df = pd.DataFrame(data, dtype = str)
