@@ -14,22 +14,20 @@ def rest_scrape(api, searchQuery = ['#datascience'], prefix = 'twitter',sinceId 
 	The code will create files for each term in the working directory.  The prefix string
 	is added to the front of each file name to distinguish this scrape.
     """
-	import tweepy
-	import time
-	import sys
-	import json
-	import os
-
-	if (not api):
+    import tweepy
+    import time
+    import sys
+    import json
+    
+    if (not api):
 	    print ("Can't Authenticate")
 	    sys.exit(-1)
-	#%%
-
-	maxTweets = 10000000 # Some arbitrary large number
-	tweetsPerQry = 100  # this is the max the API permits
-
-	count = 0
-	for query in searchQuery:
+        
+    maxTweets = 10000000 # Some arbitrary large number
+    tweetsPerQry = 100  # this is the max the API permits
+    
+    count = 0
+    for query in searchQuery:
 	    sinceId = None
 	    max_id = -1 # 965975379323379712
 	    count =+1
