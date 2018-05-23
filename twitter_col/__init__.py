@@ -921,7 +921,7 @@ def extract_gender(file, to_csv = False):
     
 def get_followers(api, ID):
     import tweepy
-    followers = api.follower_ids(ID)
+    followers = api.followers_ids(ID)
     followers = fetch_profiles(api,  ids = followers)
     return(followers)
 
