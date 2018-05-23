@@ -321,7 +321,10 @@ def convert_dates(date_list):
     dates2 = []
     bar = progressbar.ProgressBar()
     for d in bar(date_list):
-        dates2.append(dateutil.parser.parse(d))  
+        try:
+            dates2.append(dateutil.parser.parse(d))  
+        except:
+            print("Error with date:",d)
     return(dates2)
     
 #%%
