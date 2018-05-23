@@ -921,8 +921,12 @@ def extract_gender(file, to_csv = False):
     
 def get_followers(api, ID):
     import tweepy
-    followers = api.followers_ids(ID)
-    followers = fetch_profiles(api,  ids = followers)
+    try:
+        followers = api.followers_ids(ID)
+        followers = fetch_profiles(api,  ids = followers)
+    except:
+        print('Scraping Error')
+        continue
     return(followers)
 
 #%%
