@@ -924,10 +924,11 @@ def get_followers(api, ID):
     try:
         followers = api.followers_ids(ID)
         followers = fetch_profiles(api,  ids = followers)
+        return(followers)
     except:
         print('Scraping Error')
-        continue
-    return(followers)
+        return([])
+
 
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
