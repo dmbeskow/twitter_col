@@ -931,6 +931,74 @@ def get_followers(api, ID):
 
 
 #%%
+def get_followers_for_id(api, iuser_id):
+    '''
+    Gets ALL follower IDS for a given user
+    Adapted from Mike K's code.  
+    '''
+    
+    import tweepy
+    
+    followers = []
+    
+    try:
+        for page in tweepy.Cursor(api.followers_ids, iuser_id).pages():
+            followers += page
+    except tweepy.TweepError as ex:
+        print("get_followers_for_id(): could not get friends for user: " + str(iuser_id))
+        print("\terror message: " + str(ex))
+        
+    return(followers)
+    
+#%%
+def get_friends_for_id(api, iuser_id):
+    '''
+    Gets ALL friend IDS for a given user
+    Adapted from Mike K's code.  
+    '''
+    
+    import tweepy
+    
+    friends = []
+    
+    try:
+        for page in tweepy.Cursor(api.friends_ids, iuser_id).pages():
+            friends += page
+    except tweepy.TweepError as ex:
+        print("get_followers_for_id(): could not get friends for user: " + str(iuser_id))
+        print("\terror message: " + str(ex))
+        
+    return(friends)
+#%%
+def get_all_tweets(api, id_str):
+    #Twitter only allows access to a users most recent 3240 tweets with this method
+
+    	
+    #initialize a list to hold all the tweepy Tweets
+    alltweets = []	
+    	
+    #make initial request for most recent tweets (200 is the maximum allowed count)
+    new_tweets = api.user_timeline(user_id = id_str,count=200)
+    	
+    #save most recent tweets
+    alltweets.extend(new_tweets)
+    	
+    #save the id of the oldest tweet less one
+    oldest = alltweets[-1].id - 1
+    	
+    #keep grabbing tweets until there are no tweets left to grab
+    while len(new_tweets) > 0:
+        print("getting tweets before %s" % (oldest))
+        
+        #all subsiquent requests use the max_id param to prevent duplicates
+        new_tweets = api.user_timeline(user_id = id_str ,count=200,max_id=oldest)
+        #save most recent tweets
+        alltweets.extend(new_tweets)
+        #update the id of the oldest tweet less one
+        oldest = alltweets[-1].id - 1
+        
+    print("...%s tweets downloaded so far" % (len(alltweets)))
+   #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
 #    This parses 'tweet' json to a pandas dataFrame.
