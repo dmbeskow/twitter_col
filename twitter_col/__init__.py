@@ -998,6 +998,8 @@ def get_all_tweets(api, id_str):
         oldest = alltweets[-1].id - 1
         
     print("...%s tweets downloaded so far" % (len(alltweets)))
+    
+    return(alltweets)
    #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
