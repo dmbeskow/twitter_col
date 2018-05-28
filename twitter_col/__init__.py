@@ -982,20 +982,21 @@ def get_all_tweets(api, id_str):
     	
     #save most recent tweets
     alltweets.extend(new_tweets)
-    	
+    
+    if len(alltweets) > 100:
     #save the id of the oldest tweet less one
-    oldest = alltweets[-1].id - 1
-    	
-    #keep grabbing tweets until there are no tweets left to grab
-    while len(new_tweets) > 0:
-        print("getting tweets before %s" % (oldest))
-        
-        #all subsiquent requests use the max_id param to prevent duplicates
-        new_tweets = api.user_timeline(user_id = id_str ,count=200,max_id=oldest)
-        #save most recent tweets
-        alltweets.extend(new_tweets)
-        #update the id of the oldest tweet less one
         oldest = alltweets[-1].id - 1
+        	
+        #keep grabbing tweets until there are no tweets left to grab
+        while len(new_tweets) > 0:
+#            print("getting tweets before %s" % (oldest))
+            
+            #all subsiquent requests use the max_id param to prevent duplicates
+            new_tweets = api.user_timeline(user_id = id_str ,count=200,max_id=oldest)
+            #save most recent tweets
+            alltweets.extend(new_tweets)
+            #update the id of the oldest tweet less one
+            oldest = alltweets[-1].id - 1
         
     print("...%s tweets downloaded so far" % (len(alltweets)))
     
