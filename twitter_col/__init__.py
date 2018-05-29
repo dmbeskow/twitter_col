@@ -629,10 +629,14 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
     else:
         infile = open(file, 'r')
     bar = progressbar.ProgressBar()
+    count = 0
     for line in bar(infile):
         if line == '\n':
             continue
-        tweet = json.loads(line)
+        try:
+            tweet = json.loads(line)
+        except:
+            count += 1
         dateTime = tweet['created_at']
         m = get_mention(tweet, kind = 'id_str')
         if len(m) > 0 and mentions:
@@ -679,6 +683,7 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
             'status_id': ID}
     
     df = pd.DataFrame(data)
+    print("Total of ", count, "JSON load errors")
     if to_csv:
         df.to_csv(file.rstrip('.json')+'_edgelist.csv', index = False)
     else:
