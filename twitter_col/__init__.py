@@ -1002,10 +1002,14 @@ def get_all_tweets(api, id_str):
             alltweets.extend(new_tweets)
             #update the id of the oldest tweet less one
             oldest = alltweets[-1].id - 1
+            
+    final = []
+    for tweet in alltweets:
+        final.append(tweet._json)
         
     print("...%s tweets downloaded so far" % (len(alltweets)))
     
-    return(alltweets)
+    return(final)
    #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
