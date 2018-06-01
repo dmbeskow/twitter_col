@@ -1041,7 +1041,7 @@ def remove_bad_json_data(files):
             try:
                 tweet = json.loads(line)
                 out = json.dumps(tweet)
-                outfile.write(out)
+                outfile.write(out + '\n')
                 
             except:
                 count += 1
