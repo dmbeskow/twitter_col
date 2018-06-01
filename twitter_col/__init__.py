@@ -1031,6 +1031,8 @@ def remove_bad_json_data(files):
             outfile = gzip.open('fixed_' + file, 'wt')
         else:
             infile = open(file, 'r')
+            outfile = open('fixed_' + file, 'w')
+        
         bar = progressbar.ProgressBar()
         count = 0
         for line in bar(infile):
