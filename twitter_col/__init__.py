@@ -1010,6 +1010,43 @@ def get_all_tweets(api, id_str):
     print("...%s tweets downloaded so far" % (len(alltweets)))
     
     return(final)
+    
+#%%
+
+def remove_bad_json_data(files):
+    '''
+    Goes through each file and removes ill formed json 
+    
+    Example: twitter_col.remove_bad_json_data(files)
+    '''
+    import io, gzip, json
+    import progressbar
+    
+    if not isinstance(files, list):
+        files = [files]
+    for file in files:
+        count = 0
+        if '.gz' in file:
+            infile = io.TextIOWrapper(gzip.open(file, 'r'))
+            outfile = gzip.open('fixed_' + file, 'wt')
+        else:
+            infile = open(file, 'r')
+        bar = progressbar.ProgressBar()
+        count = 0
+        for line in bar(infile):
+            if line == '\n':
+                continue
+            try:
+                tweet = json.loads(line)
+                out = json.dumps(tweet)
+                outfile.write(out)
+                
+            except:
+                count += 1
+        infile.close()
+        outfile.close()
+        print(file, 'has', str(count),'errors')
+    
    #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
