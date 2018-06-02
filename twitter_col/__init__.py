@@ -1075,7 +1075,7 @@ def filter_tweets_by_date(files, start , stop ):
             outfile = gzip.open('fixed_' + file, 'wt')
         else:
             infile = open(file, 'r')
-            outfile = open('fixed_' + file, 'w')
+            outfile = open('filtered_' + file, 'w')
         
         bar = progressbar.ProgressBar()
         count = 0
