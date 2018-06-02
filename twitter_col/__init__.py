@@ -1050,6 +1050,53 @@ def remove_bad_json_data(files):
         print(file, 'has', str(count),'errors')
     
    #%%
+   
+   
+def filter_tweets_by_date(files, start , stop ):
+    '''
+    Goes through each file and removes ill formed json 
+    
+    Example: twitter_col.remove_bad_json_data(files)
+    '''
+    import io, gzip, json
+    import progressbar
+    import dateutil
+    
+    start = dateutil.parser.parse(start)
+    stop = dateutil.parser.parse(stop)
+    
+    if not isinstance(files, list):
+        files = [files]
+    bar = progressbar.ProgressBar()
+    for file in bar(files):
+        count = 0
+        if '.gz' in file:
+            infile = io.TextIOWrapper(gzip.open(file, 'r'))
+            outfile = gzip.open('fixed_' + file, 'wt')
+        else:
+            infile = open(file, 'r')
+            outfile = open('fixed_' + file, 'w')
+        
+        bar = progressbar.ProgressBar()
+        count = 0
+        for line in infile:
+            if line == '\n':
+                continue
+            try:
+                tweet = json.loads(line)
+                created_at = dateutil.parser.parse(tweet['created_at'])
+                if created_at > start:
+                    if created_at < stop:
+                        
+                        out = json.dumps(tweet)
+                        outfile.write(out + '\n')
+                
+            except:
+                count += 1
+        infile.close()
+        outfile.close()
+        print(file, 'has', str(count),'errors')
+#%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
 #    This parses 'tweet' json to a pandas dataFrame.
