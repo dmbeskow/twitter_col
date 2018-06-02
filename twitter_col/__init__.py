@@ -1061,9 +1061,10 @@ def filter_tweets_by_date(files, start , stop, file_name):
     import io, gzip, json
     import progressbar
     import dateutil.parser
+    from pytz import timezone
     
-    start = dateutil.parser.parse(start)
-    stop = dateutil.parser.parse(stop)
+    start = dateutil.parser.parse(start).replace(tzinfo=timezone('UTC'))
+    stop = dateutil.parser.parse(stop).replace(tzinfo=timezone('UTC'))
     
     if not isinstance(files, list):
         files = [files]
