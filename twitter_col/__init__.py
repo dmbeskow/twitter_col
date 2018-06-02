@@ -1052,7 +1052,7 @@ def remove_bad_json_data(files):
    #%%
    
    
-def filter_tweets_by_date(files, start , stop ):
+def filter_tweets_by_date(files, start , stop, file_name):
     '''
     Goes through each file and removes ill formed json 
     
@@ -1067,35 +1067,33 @@ def filter_tweets_by_date(files, start , stop ):
     
     if not isinstance(files, list):
         files = [files]
-    bar = progressbar.ProgressBar()
-    for file in bar(files):
-        count = 0
-        if '.gz' in file:
-            infile = io.TextIOWrapper(gzip.open(file, 'r'))
-            outfile = gzip.open('fixed_' + file, 'wt')
-        else:
-            infile = open(file, 'r')
-            outfile = open('filtered_' + file, 'w')
-        
+    with open(file_name, 'w') as outfile:
         bar = progressbar.ProgressBar()
-        count = 0
-        for line in infile:
-            if line == '\n':
-                continue
-            try:
-                tweet = json.loads(line)
-                created_at = dateutil.parser.parse(tweet['created_at'])
-                if created_at > start:
-                    if created_at < stop:
-                        
-                        out = json.dumps(tweet)
-                        outfile.write(out + '\n')
-                
-            except:
-                count += 1
-        infile.close()
-        outfile.close()
-        print(file, 'has', str(count),'errors')
+        for file in bar(files):
+            count = 0
+            if '.gz' in file:
+                infile = io.TextIOWrapper(gzip.open(file, 'r'))
+            else:
+                infile = open(file, 'r')
+            
+            bar = progressbar.ProgressBar()
+            count = 0
+            for line in infile:
+                if line == '\n':
+                    continue
+                try:
+                    tweet = json.loads(line)
+                    created_at = dateutil.parser.parse(tweet['created_at'])
+                    if created_at > start:
+                        if created_at < stop:
+                            
+                            out = json.dumps(tweet)
+                            outfile.write(out + '\n')
+                    
+                except:
+                    count += 1
+            infile.close()
+            print(file, 'has', str(count),'errors')
 #%%
 #def parse_user_json(files, file_prefix = 'twitter', to_csv = False):
 #    """
