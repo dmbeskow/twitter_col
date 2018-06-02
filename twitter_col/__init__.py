@@ -1060,7 +1060,7 @@ def filter_tweets_by_date(files, start , stop, file_name):
     '''
     import io, gzip, json
     import progressbar
-    import dateutil
+    import dateutil.parser
     
     start = dateutil.parser.parse(start)
     stop = dateutil.parser.parse(stop)
