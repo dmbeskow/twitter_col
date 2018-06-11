@@ -93,14 +93,23 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
         else:
             infile = open(f, 'r')
         for line in infile:
-            tweet = json.loads(line)
-            m = get_mention(tweet, kind = name)
-            if len(m) > 0:
-                for mention in m:
-                    final['user'].append(tweet['user'][name])
-                    final['mention'].append(mention)
-                    final['status_id'].append(tweet['id_str'])
-                    final['date'].append(tweet['created_at'])
+            if line != '\n':
+                try:
+                    tweet = json.loads(line)
+                except:
+                    continue
+                if 'status' in tweet.keys():
+                    temp = tweet['status']
+                    getRid = tweet.pop('status', 'Entry not found')
+                    temp['user'] = tweet
+                    tweet = temp
+                m = get_mention(tweet, kind = name)
+                if len(m) > 0:
+                    for mention in m:
+                        final['user'].append(tweet['user'][name])
+                        final['mention'].append(mention)
+                        final['status_id'].append(tweet['id_str'])
+                        final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
@@ -128,14 +137,23 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
         else:
             infile = open(f, 'r')
         for line in infile:
-            tweet = json.loads(line)
-            h = get_hash(tweet)
-            if len(h) > 0:
-                for hashtag in h:
-                    final['user'].append(tweet['user'][name])
-                    final['hashtag'].append(hashtag)
-                    final['status_id'].append(tweet['id_str'])
-                    final['date'].append(tweet['created_at'])
+            if line != '\n':
+                try:
+                    tweet = json.loads(line)
+                except:
+                    continue
+                if 'status' in tweet.keys():
+                    temp = tweet['status']
+                    getRid = tweet.pop('status', 'Entry not found')
+                    temp['user'] = tweet
+                    tweet = temp
+                h = get_hash(tweet)
+                if len(h) > 0:
+                    for hashtag in h:
+                        final['user'].append(tweet['user'][name])
+                        final['hashtag'].append(hashtag)
+                        final['status_id'].append(tweet['id_str'])
+                        final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_hashtags_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
@@ -159,17 +177,23 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
         else:
             infile = open(f, 'r')
         for line in infile:
-            try:
-                tweet = json.loads(line)
-            except:
-                continue
-            u = get_urls(tweet)
-            if len(u) > 0:
-                for url in u:
-                    final['user'].append(tweet['user'][name])
-                    final['url'].append(url)
-                    final['status_id'].append(tweet['id_str'])
-                    final['date'].append(tweet['created_at'])
+             if line != '\n':
+                try:
+                    tweet = json.loads(line)
+                except:
+                    continue
+                if 'status' in tweet.keys():
+                    temp = tweet['status']
+                    getRid = tweet.pop('status', 'Entry not found')
+                    temp['user'] = tweet
+                    tweet = temp
+                u = get_urls(tweet)
+                if len(u) > 0:
+                    for url in u:
+                        final['user'].append(tweet['user'][name])
+                        final['url'].append(url)
+                        final['status_id'].append(tweet['id_str'])
+                        final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_urls_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
@@ -195,18 +219,27 @@ def extract_media(files,   file_prefix = 'twitter',to_csv = True, name = 'id_str
             infile = open(f, 'r')
         bar =  progressbar.ProgressBar()
         for line in bar(infile):
-            tweet = json.loads(line)
-            if 'extended_entities' in tweet.keys():
-                if 'media' in tweet['extended_entities']:
-                    for m in tweet['extended_entities']['media']:
-                        final['user'].append(tweet['user'][name])
-                        final['type'].append(m['type'])
-                        final['display_url'].append(m['display_url'])
-                        final['expanded_url'].append(m['expanded_url'])
-                        final['media_url'].append(m['media_url'])
-                        final['media_url_https'].append(m['media_url_https'])
-                        final['status_id'].append(tweet['id_str'])
-                        final['date'].append(tweet['created_at'])
+            if line != '\n':
+                try:
+                    tweet = json.loads(line)
+                except:
+                    continue
+                if 'status' in tweet.keys():
+                    temp = tweet['status']
+                    getRid = tweet.pop('status', 'Entry not found')
+                    temp['user'] = tweet
+                    tweet = temp
+                if 'extended_entities' in tweet.keys():
+                    if 'media' in tweet['extended_entities']:
+                        for m in tweet['extended_entities']['media']:
+                            final['user'].append(tweet['user'][name])
+                            final['type'].append(m['type'])
+                            final['display_url'].append(m['display_url'])
+                            final['expanded_url'].append(m['expanded_url'])
+                            final['media_url'].append(m['media_url'])
+                            final['media_url_https'].append(m['media_url_https'])
+                            final['status_id'].append(tweet['id_str'])
+                            final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_media_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
