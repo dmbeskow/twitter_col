@@ -376,7 +376,8 @@ def get_all_network_files( files, file_prefix = 'twitter', name = 'id_str'):
     extract_retweet_network(files, file_prefix=file_prefix, name=name, to_csv=True)
 #%%
     
-def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment = False):
+def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, 
+                       sentiment = False, keep_empty_status = True):
     """
     This parses 'tweet' json to a pandas dataFrame. 'name' should be either
     'id_str' or 'screen_name'.  This will choose which object is selected for
@@ -434,6 +435,11 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, sentiment
                     t = json.loads(line)
                 except:
                     continue
+                if keep_empty_status:
+                    if 'status' not in t.keys():
+                        if 'friends_count' in t.keys():
+                                t['status'] = get_empty_status()
+                    
                 if 'status' in t.keys():
                     temp = t['status']
                     getRid = t.pop('status', 'Entry not found')
@@ -1129,7 +1135,38 @@ def filter_tweets_by_date(files, start , stop, file_name):
             infile.close()
             print(file, 'has', str(count),'errors')
 #%%
-            
+def get_empty_status():          
+    '''
+    This function returns an empty or Null status.  This is used to attach to
+    the dictionary of any account that has never tweeted
+    '''
+    
+    status = {'contributors': None,
+              'coordinates': None, 
+              'created_at': None,
+              'entities': {'hashtags': [],
+                           'symbols': [],
+                           'urls': [],
+                           'user_mentions': []},
+               'favorite_count': None,
+               'favorited': None,
+               'geo': None,
+               'id': None,
+               'id_str': None,
+               'in_reply_to_screen_name': None,
+               'in_reply_to_status_id': None,
+               'in_reply_to_status_id_str': None,
+               'in_reply_to_user_id': None,
+               'in_reply_to_user_id_str': None,
+               'is_quote_status': False,
+               'lang': None,
+               'place': None,
+               'retweet_count': None,
+               'retweeted': None,
+               'source': None,
+               'text': None,
+               'truncated': None}
+    return(status)
             
 #%%
 
