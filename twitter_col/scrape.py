@@ -31,7 +31,7 @@ def rest_scrape(api, searchQuery = ['#datascience'], prefix = 'twitter',sinceId 
 	    sinceId = None
 	    max_id = -1 # 965975379323379712
 	    count =+1
-	    fName = prefix + str(count) + '_'+time.strftime("%Y-%m-%d")+'.json'
+	    fName = prefix + '_' + query + '_'+time.strftime("%Y-%m-%d")+'.json'
 	    tweetCount = 0
 	    print("Downloading max {0} tweets".format(maxTweets))
 	    with open(fName, 'w') as f:
