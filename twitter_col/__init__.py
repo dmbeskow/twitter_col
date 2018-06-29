@@ -686,11 +686,14 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
                  Time.append(dateTime)
                  ID.append(tweet['id_str'])
         if tweet['in_reply_to_user_id_str'] != None and replies:
-             To.append(tweet['in_reply_to_user_' + kind])
-             From.append(tweet['user'][kind])
-             Type.append('reply')
-             Time.append(dateTime)
-             ID.append(tweet['id_str'])
+            if kind == 'id_str':
+                To.append(tweet['in_reply_to_user_id_str'])
+            else:
+                To.append(tweet['in_reply_to_screen_name' ])                
+            From.append(tweet['user'][kind])
+            Type.append('reply')
+            Time.append(dateTime)
+            ID.append(tweet['id_str'])
         if 'retweeted_status' in tweet.keys() and retweets:
              From.append(tweet['user'][kind])
              To.append(tweet['retweeted_status']['user'][kind])
