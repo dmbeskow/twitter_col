@@ -647,7 +647,7 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
 
         
 def get_edgelist_file(file, mentions = True, replies = True, retweets = True, 
-                 urls = False, hashtags = False, to_csv = True):
+                 urls = False, hashtags = False, to_csv = True, kind = 'screen_name'):
     ''' 
     Builds an agent x agent edgelist of a Tweet json (normal or gzipped)
     '''
@@ -677,30 +677,30 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
         except:
             count += 1
         dateTime = tweet['created_at']
-        m = get_mention(tweet, kind = 'id_str')
+        m = get_mention(tweet, kind = kind)
         if len(m) > 0 and mentions:
              for mention in m:
-                 From.append(tweet['user']['id_str'])
+                 From.append(tweet['user'][kind])
                  To.append(mention)
                  Type.append('mention')
                  Time.append(dateTime)
                  ID.append(tweet['id_str'])
         if tweet['in_reply_to_user_id_str'] != None and replies:
-             To.append(tweet['in_reply_to_user_id_str'])
-             From.append(tweet['user']['id_str'])
+             To.append(tweet['in_reply_to_user_' + kind])
+             From.append(tweet['user'][kind])
              Type.append('reply')
              Time.append(dateTime)
              ID.append(tweet['id_str'])
         if 'retweeted_status' in tweet.keys() and retweets:
-             From.append(tweet['user']['id_str'])
-             To.append(tweet['retweeted_status']['user']['id_str'])
+             From.append(tweet['user'][kind])
+             To.append(tweet['retweeted_status']['user'][kind])
              Type.append('retweet')
              Time.append(dateTime)
              ID.append(tweet['id_str'])
         u = get_urls(tweet)
         if len(u) > 0 and urls:
              for url in u:
-                 From.append(tweet['user']['id_str'])
+                 From.append(tweet['user'][kind])
                  To.append(url)
                  Type.append('url')
                  Time.append(dateTime)
@@ -708,7 +708,7 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
         h = get_hash(tweet)
         if len(h) > 0 and hashtags:
              for Hash in h:
-                 From.append(tweet['user']['id_str'])
+                 From.append(tweet['user'][kind])
                  To.append(Hash)
                  Type.append('hashtag')
                  Time.append(dateTime)
