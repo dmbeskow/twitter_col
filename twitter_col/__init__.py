@@ -479,7 +479,8 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
           "status_created_at": [],
           "retweet_status_id": [],
           "reply_to_user_id": [],
-          "reply_to_status_id": []
+          "reply_to_status_id": [],
+          "has_default_profile" : []
           }
     for f in files:
         if '.gz' in f:
@@ -559,6 +560,10 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
                     else:
                         data['lon'].append(None)
                         data['lat'].append(None)
+                    if t['user']['profile_image_url'] == "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png":
+                        data['has_default_profile'].append(True)
+                    else:
+                        data['has_default_profile'].append(False)
 
         
     df = pd.DataFrame(data, dtype = str)
@@ -621,7 +626,8 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
           "status_created_at": [],
           "retweet_status_id": [],
           "reply_to_user_id": [],
-          "reply_to_status_id": []
+          "reply_to_status_id": [],
+          "has_default_profile" : []
           }
 
     bar = progressbar.ProgressBar()
@@ -682,6 +688,11 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
             else:
                 data['lon'].append(None)
                 data['lat'].append(None)
+                
+            if t['user']['profile_image_url'] == "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png":
+                data['has_default_profile'].append(True)
+            else:
+                data['has_default_profile'].append(False)
 
         
     df = pd.DataFrame(data, dtype = str)
