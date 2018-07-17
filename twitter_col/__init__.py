@@ -1,3 +1,21 @@
+def check_tweet(tweet):
+    """
+    Takes user objects and reverses them to create status objects
+    
+    """
+    import twitter_col
+    if 'status' not in tweet.keys():
+        if 'friends_count' in tweet.keys():
+            tweet['status'] = twitter_col.get_empty_status()
+    if 'status' in tweet.keys():
+        temp = tweet['status']
+        getRid = tweet.pop('status', 'Entry not found')
+        temp['user'] = tweet
+        tweet = temp
+        return(tweet)
+        
+#%%
+
 def get_hash(tweet):
     """
     Returns list of hashtags in a tweet.  If no hashtags, 
@@ -33,8 +51,16 @@ def get_urls(tweet):
         for u in tweet['entities']['urls']:
             url.append(u['expanded_url'])
     return(url)
-    
 #%%
+def get_emojis(tweet):
+    """
+    Returns list of emoji's for a tweet.  If no emoji's, returns empty list
+    """
+    import emoji
+    string = tweet['text']
+    return [c for c in string if c in emoji.UNICODE_EMOJI]
+#%%
+    
 def get_reply_conversation(files, status_ids):
     """
     Recursively extracts replies and replies to replies in order to pull all
@@ -161,7 +187,43 @@ def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str',
     else:
         return(df[['user', 'hashtag', 'status_id','date']])
 #%%     
-def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'):
+def extract_emoji(files, file_prefix = 'twitter',  to_csv = False, name = 'id_str'):
+    """
+   Creates  csv containing all emojis in a set of tweets 
+   
+    """
+    import json, io, gzip, time
+    import pandas as pd
+    if not isinstance(files, list):
+       files = [files]
+    final = {'date': [],'emoji': [], 'user': [] , 'status_id': []}
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        for line in infile:
+             if line != '\n':
+                try:
+                    tweet = check_tweet(json.loads(line))
+                except:
+                    continue
+                E = get_emojis(tweet)
+                if len(E) > 0:
+                    for emoj in E:
+                        final['user'].append(tweet['user'][name])
+                        final['emoji'].append(emoj)
+                        final['status_id'].append(tweet['id_str'])
+                        final['date'].append(tweet['created_at'])
+    df = pd.DataFrame(final)
+    if to_csv:
+        df.to_csv(file_prefix + '_emojis_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+                  index = False ,  encoding = 'utf-8', columns = ['user', 'emoji', 'status_id','date'])
+    else:
+        return(df[['user', 'emoji', 'status_id','date']])
+        
+#%%
+def extract_urls(files, file_prefix = 'twitter',  to_csv = False, name = 'id_str'):
     """
    Creates  csv containing all URLS in a set of tweets 
    
@@ -179,14 +241,9 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
         for line in infile:
              if line != '\n':
                 try:
-                    tweet = json.loads(line)
+                    tweet = check_tweet(json.loads(line))
                 except:
                     continue
-                if 'status' in tweet.keys():
-                    temp = tweet['status']
-                    getRid = tweet.pop('status', 'Entry not found')
-                    temp['user'] = tweet
-                    tweet = temp
                 u = get_urls(tweet)
                 if len(u) > 0:
                     for url in u:
@@ -199,7 +256,8 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = True, name = 'id_str'
         df.to_csv(file_prefix + '_urls_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
                   index = False ,  encoding = 'utf-8', columns = ['user', 'url', 'status_id','date'])
     else:
-        return(df[['user', 'url', 'status_id','date']])
+        return(df[['user', 'url', 'status_id','date']])        
+        
 #%%     
 def extract_media(files,   file_prefix = 'twitter',to_csv = True, name = 'id_str'):
     """
@@ -965,7 +1023,7 @@ def extract_gender(file, to_csv = False):
     else:
         return(df)
     
-    
+#%%   
 def get_followers(api, ID):
     import tweepy
     try:
