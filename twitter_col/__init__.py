@@ -711,7 +711,82 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
     else:
         return(df)
         
-
+#%%
+    
+def parse_only_text(files, file_prefix = 'twitter', to_csv = False, 
+                       sentiment = False, keep_empty_status = True):
+    """
+    This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id, 
+    tweet id, and language settings. 'name' should be either
+    'id_str' or 'screen_name'.  
+    """
+    import pandas as pd
+    from textblob import TextBlob
+    import json, time, io, gzip
+    import progressbar
+    
+    if not isinstance(files, list):
+       files = [files]
+    data = { "id_str" : [],
+        "lang" : [],
+        "status_text" : [],
+          "status_lang" : [],
+          "status_id" : [],
+          "status_created_at": []
+          }
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar = progressbar.ProgressBar()
+        for line in bar(infile):
+            if line != '\n':
+                try:
+                    t = json.loads(line)
+                except:
+                    continue
+                if keep_empty_status:
+                    if 'status' not in t.keys():
+                        if 'friends_count' in t.keys():
+                                t['status'] = get_empty_status()
+                    
+                if 'status' in t.keys():
+                    temp = t['status']
+                    getRid = t.pop('status', 'Entry not found')
+                    temp['user'] = t
+                    t = temp
+                if 'user' in t.keys():
+                    data['id_str'].append(t['user']['id_str'])
+                    data['lang'].append(t['user']['lang'])
+                    data['status_lang'].append(t['lang'])
+                    data['status_id'].append(t['id'])
+                    data['status_created_at'].append(t['created_at'])
+                    
+                    if 'extended_tweet' in t.keys():
+                        if 'full_text' in t['extended_tweet']:
+                            data['status_text'].append(t['extended_tweet']['full_text'])
+                    elif 'full_text' in t.keys():
+                        data['status_text'].append(t['full_text'])
+                    else:
+                        data['status_text'].append(t['text'])
+            
+        
+    df = pd.DataFrame(data, dtype = str)
+    
+    if sentiment:
+        sent = []
+        for t in df['status_text'].tolist():
+            text = TextBlob(t)
+            sent.append(text.sentiment.polarity)
+        df['sentiment_score'] = sent
+        df['sentiment_label'] = df['sentiment_score'].apply(get_sensitivity)
+            
+    if to_csv:
+        df.to_csv(file_prefix + '_parsedTweetData_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+                  index = False , encoding = 'utf-8')
+    else:
+        return(df)
 #%%
 
         
