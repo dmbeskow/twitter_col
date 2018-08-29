@@ -1315,7 +1315,7 @@ def get_empty_status():
                'truncated': None}
     return(status)
 #%% 
-def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'followers', friend_tag = 'friends'):
+def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'followers', friend_tag = 'friends',column_label = 'id_str'):
     '''
     This function loops through a directory and builds friend/follower network 
     in an edgelist format. 
@@ -1350,7 +1350,7 @@ def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'f
     for file in bar(frd_files):
         account = re.findall(r'\d+',file)
         account = max(account, key = len)
-        temp = pd.read_csv(file).tolist()
+        temp = pd.read_csv(file)[column_label].tolist()
         for item in temp:
             final['from'].append(account)
             final['to'].append(item)
@@ -1361,7 +1361,7 @@ def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'f
     for file in bar(fol_files):
         account = re.findall(r'\d+',file)
         account = max(account, key = len)
-        temp = pd.read_csv(file).tolist()
+        temp = pd.read_csv(file)[column_label].tolist()
         for item in temp:
             final['to'].append(account)
             final['from'].append(item)
