@@ -1329,18 +1329,17 @@ def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'f
     
     import os
     import pandas as pd
-    import io, gzip, json
     import progressbar
     import re
     
     frd_files = os.listdir(frd_directory)
     fol_files = os.listdir(fol_directory)
     
-    frd_files = [x for x in files if friend_tag in x]
+    frd_files = [x for x in frd_files if friend_tag in x]
     frd_files = [frd_directory + '/' + x for x in frd_files]
     
-    fol_files = [x for x in files if follower_tag in x]
-    fol_foles = [fol_directory + '/' + x for x in fol_files]
+    fol_files = [x for x in fol_files if follower_tag in x]
+    fol_files = [fol_directory + '/' + x for x in fol_files]
     
     final = {'from': [],
              'to' : [],
