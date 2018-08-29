@@ -1314,6 +1314,70 @@ def get_empty_status():
                'text': None,
                'truncated': None}
     return(status)
+#%% 
+def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'followers', friend_tag = 'friends'):
+    '''
+    This function loops through a directory and builds friend/follower network 
+    in an edgelist format. 
+    
+    Files must be uncompressed (not gzipped)
+    
+    kind can be 'both', 'follower', 'friend'
+    
+    Returns an edgelist pandas data frame.
+    '''
+    
+    import os
+    import pandas as pd
+    import io, gzip, json
+    import progressbar
+    import re
+    
+    frd_files = os.listdir(frd_directory)
+    fol_files = os.listdir(fol_directory)
+    
+    frd_files = [x for x in files if friend_tag in x]
+    frd_files = [frd_directory + '/' + x for x in frd_files]
+    
+    fol_files = [x for x in files if follower_tag in x]
+    fol_foles = [fol_directory + '/' + x for x in fol_files]
+    
+    final = {'from': [],
+             'to' : [],
+             'type' : []}
+    
+    print('Getting friend links...\n')
+    bar = progressbar.ProgressBar()
+    for file in bar(frd_files):
+        account = re.findall(r'\d+',file)
+        account = max(account, key = len)
+        temp = pd.read_csv(file).tolist()
+        for item in temp:
+            final['from'].append(account)
+            final['to'].append(item)
+            final['type'].append('friend')
+            
+    print('Getting follower links...\n')
+    bar = progressbar.ProgressBar()        
+    for file in bar(fol_files):
+        account = re.findall(r'\d+',file)
+        account = max(account, key = len)
+        temp = pd.read_csv(file).tolist()
+        for item in temp:
+            final['to'].append(account)
+            final['from'].append(item)
+            final['type'].append('follower')
+            
+    final = pd.DataFrame(final)
+    
+    return(final)
+            
+            
+        
+        
+        
+
+        
             
 #%%
 
