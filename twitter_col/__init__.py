@@ -632,6 +632,15 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
 
     bar = progressbar.ProgressBar()
     for t in bar(List):
+        if 'status' not in t.keys():
+            if 'friends_count' in t.keys():
+                t['status'] = get_empty_status()
+                    
+        if 'status' in t.keys():
+            temp = t['status']
+            getRid = t.pop('status', 'Entry not found')
+            temp['user'] = t
+            t = temp
         if 'user' in t.keys():
             data['id_str'].append(t['user']['id_str'])
             data['name'].append(t['user']['name'])
