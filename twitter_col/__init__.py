@@ -477,6 +477,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
           "status_lang" : [],
           "status_id" : [],
           "status_created_at": [],
+          "status_retweet_count": [],
           "retweet_status_id": [],
           "reply_to_user_id": [],
           "reply_to_status_id": [],
@@ -529,6 +530,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
                     data['status_lang'].append(t['lang'])
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
+                    data['status_retweet_count'].append(t['retweet_count'])
                     data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
                     data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
                     
@@ -624,6 +626,7 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
           "status_lang" : [],
           "status_id" : [],
           "status_created_at": [],
+          "status_retweet_count": [],
           "retweet_status_id": [],
           "reply_to_user_id": [],
           "reply_to_status_id": [],
@@ -666,6 +669,7 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
             data['status_lang'].append(t['lang'])
             data['status_id'].append(t['id'])
             data['status_created_at'].append(t['created_at'])
+            data['status_retweet_count'].append(t['retweet_count'])
             data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
             data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
             
