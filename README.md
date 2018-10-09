@@ -52,6 +52,37 @@ url['url'].value_counts().head(n = 15).sort_values().plot(kind = 'barh', title =
 
 The code below assumes that you've authenticated with the `tweepy` Python package with an object called 'api'.  
 
+Below is a basic script for a content related REST Scrape.  This script will take a list of terms (no limit in number) and individually search twitter for any time these terms appear in the last week.  It will save these into separate files by term.  Note that each file will not contain duplicates, but that combining the files will create duplicates.  The 'prefix' adds a string to the file names that allows you to differentiate separate projects (i.e. 'NBA' vs 'NFL' scrapes).
+
+```python
+import tweepy
+import sys
+from twitter_col import scrape
+
+from pathlib import Path
+home = str(Path.home())
+
+# Replace the API_KEY and API_SECRET with your application's key and secret.
+auth = tweepy.AppAuthHandler( 'consumer_key', 'consumer_secret')
+
+api = tweepy.API(auth, wait_on_rate_limit=True,
+                                   wait_on_rate_limit_notify=True)
+
+if (not api):
+    print ("Can't Authenticate")
+    sys.exit(-1)
+
+
+
+terms = ['#NBA','#basketball','#jordan']
+
+scrape.rest_scrape(api, searchQuery = terms, prefix = 'NBA',sinceId = None, max_id = -1 )
+
+
+```
+
+
+
 Below we grab the JSON data for a list of users (either screen name or id).  It will return a list of user objects, which can be written to file.
 
 ```python
