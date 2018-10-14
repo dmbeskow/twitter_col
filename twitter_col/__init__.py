@@ -992,6 +992,41 @@ def fetch_profiles(api, screen_names = [], ids = []):
     return profiles 
 
 #%%
+def fetch_profiles_file(api, screen_names = [] , ids = [] , prefix = 'user_profiles' ):
+    """
+    I copied this from:
+        https://github.com/unitedstates/congress-legislators/blob/master/scripts/social/twitter.py
+        
+    A wrapper method around tweepy.API.lookup_users that handles the batch lookup of
+      screen_names. Assuming number of screen_names < 10000, this should not typically
+      run afoul of API limits (i.e. it's a good enough hack for now)
+    `api` is a tweepy.API handle
+    `screen_names` is a list of twitter screen names
+    Returns: writes to disk as it goes
+    """
+    import tweepy, json
+    TWITTER_PROFILE_BATCH_SIZE = 100
+    from math import ceil
+    
+    with open(prefix + '_' + time.strftime('%Y%m%d') + '.json', 'w') as outfile:
+        key, lookups = ['user_ids', ids] if ids else ['screen_names', screen_names]
+        for batch_idx in range(ceil(len(lookups) / TWITTER_PROFILE_BATCH_SIZE)):
+            offset = batch_idx * TWITTER_PROFILE_BATCH_SIZE
+            # break lookups list into batches of TWITTER_PROFILE_BATCH_SIZE
+            batch = lookups[offset:(offset + TWITTER_PROFILE_BATCH_SIZE)]
+            try:
+                for user in api.lookup_users(**{key: batch}):
+                    outfile.write(json.dumps(user._json) + '\n')
+            # catch situation in which none of the names in the batch are found
+            # or else Tweepy will error out
+            except tweepy.error.TweepError as e:
+                if e.response.status_code == 404:
+                    pass
+                else: # some other error, raise the exception
+                    raise e
+            print("Batch", batch_idx)
+
+#%%
 def get_sensitivity(value):
     if value < 0:
         return("negative")
