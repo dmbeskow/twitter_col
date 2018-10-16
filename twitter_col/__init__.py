@@ -1081,17 +1081,19 @@ def check_inactive(api, uids):
         and `reason` is a string.
     """
     import progressbar
-    import tweepy
-    final = []
+    import tweepy, ast
+    import pandas as pd
+    final = {'id_str' : [], 'reason': []}
     bar = progressbar.ProgressBar()
     for uid in bar(uids):
+        final['id_str'].append(uid)
         try:
             u = api.get_user(user_id=uid)
-            final.append( (uid,"Status OK"))
+            final['reason'].append("Status OK")
         except tweepy.error.TweepError as e:
-            final.append((uid, e.reason))
-            
-    return(final)
+            e2 = ast.literal_eval(e.reason)[0]['message']
+            final['reason'].append(e2)
+    return(pd.DataFrame(final))
     
 #%%
 def dedupe_twitter(list_of_tweets):
