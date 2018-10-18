@@ -1004,7 +1004,7 @@ def fetch_profiles_file(api, screen_names = [] , ids = [] , prefix = 'user_profi
     `screen_names` is a list of twitter screen names
     Returns: writes to disk as it goes
     """
-    import tweepy, json
+    import tweepy, json, time
     TWITTER_PROFILE_BATCH_SIZE = 100
     from math import ceil
     
