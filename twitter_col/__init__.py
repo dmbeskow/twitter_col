@@ -1421,7 +1421,16 @@ def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'f
     
     return(final)
             
-            
+#%%
+def plot_time(file, breaks = 'D', field = 'status_created_at',  file_name = 'time.png' ):
+    import pandas as pd
+    import matplotlib.pyplot as pyplot
+    df = parse_twitter_json(file, to_csv = False)
+    df['date'] = pd.to_datetime(df[field])
+    df.index = df.date
+    ax = df['date'].resample('D').count().plot(title = "Twitter Timeline")
+    fig = ax.get_figure()
+    fig.savefig(file_name)            
         
         
         
