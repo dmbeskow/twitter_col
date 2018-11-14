@@ -1432,11 +1432,36 @@ def plot_time(file, breaks = 'D', field = 'status_created_at',  file_name = 'tim
     fig = ax.get_figure()
     fig.savefig(file_name)            
         
-        
-        
-
-        
             
 #%%
+def parse_only_ids(files):
+    """
+    This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id,
+    tweet id, and language settings. 'name' should be either
+    'id_str' or 'screen_name'.
+    """
+    import pandas as pd
+    from textblob import TextBlob
+    import json, time, io, gzip
+    import progressbar
 
+    if not isinstance(files, list):
+       files = [files]
+    data = { "id_str" : []}
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar = progressbar.ProgressBar()
+        for line in bar(infile):
+            if line != '\n':
+                try:
+                    t = json.loads(line)
+                except:
+                    continue
+
+                data['id_str'].append(t['id_str'])
+    df = pd.DataFrame(data, dtype = str)
+    return(df)
 
