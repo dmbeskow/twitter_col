@@ -1527,7 +1527,7 @@ def extract_coordinates(files, to_csv = False, file_prefix = 'topic'):
     
             
     if to_csv:
-        df.to_csv(file_prefix + 'geo_coordinates_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+        df.to_csv(file_prefix + '_geo_coordinates_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
                   index = False , encoding = 'utf-8')
     else:
         return(df)
