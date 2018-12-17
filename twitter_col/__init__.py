@@ -1465,3 +1465,69 @@ def parse_only_ids(files):
     df = pd.DataFrame(data, dtype = str)
     return(df)
 
+#%%
+    
+def extract_coordinates(files, to_csv = False):
+    """
+    This parses 'tweet' json to a pandas dataFrame, but focuses on the point geo
+    coordinates.  Also includes basic user data, date, and text of tweet.
+    """
+    import pandas as pd
+    import json, time, io, gzip
+    import progressbar
+    
+    if not isinstance(files, list):
+       files = [files]
+    data = { "id_str" : [],
+        "screen_name" : [],
+        "status_text" : [],
+          "status_id" : [],
+          "status_created_at": [], 
+          "lat": [],
+          "lon": []
+          }
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar = progressbar.ProgressBar()
+        for line in bar(infile):
+            if line != '\n':
+                try:
+                    t = json.loads(line)
+                except:
+                    continue
+                    
+                if 'status' in t.keys():
+                    temp = t['status']
+                    getRid = t.pop('status', 'Entry not found')
+                    temp['user'] = t
+                    t = temp
+                if 'user' in t.keys():
+                    if t['coordinates'] != None:
+                        data['id_str'].append(t['user']['id_str'])
+                        data['screen_name'].append(t['user']['screen_name'])
+                        data['status_id'].append(t['id'])
+                        data['status_created_at'].append(t['created_at'])
+                        
+                        if 'extended_tweet' in t.keys():
+                            if 'full_text' in t['extended_tweet']:
+                                data['status_text'].append(t['extended_tweet']['full_text'])
+                        elif 'full_text' in t.keys():
+                            data['status_text'].append(t['full_text'])
+                        else:
+                            data['status_text'].append(t['text'])
+                            
+                        data['lon'].append(t['coordinates']['coordinates'][0])
+                        data['lat'].append(t['coordinates']['coordinates'][1])
+            
+        
+    df = pd.DataFrame(data, dtype = str)
+    
+            
+    if to_csv:
+        df.to_csv(file_prefix + '_geo_coordinates_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+                  index = False , encoding = 'utf-8')
+    else:
+        return(df)
