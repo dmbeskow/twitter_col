@@ -1467,7 +1467,7 @@ def parse_only_ids(files):
 
 #%%
     
-def extract_coordinates(files, to_csv = False):
+def extract_coordinates(files, to_csv = False, file_prefix = 'topic'):
     """
     This parses 'tweet' json to a pandas dataFrame, but focuses on the point geo
     coordinates.  Also includes basic user data, date, and text of tweet.
@@ -1527,7 +1527,7 @@ def extract_coordinates(files, to_csv = False):
     
             
     if to_csv:
-        df.to_csv(file_prefix + '_geo_coordinates_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
+        df.to_csv(file_prefix + 'geo_coordinates_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
                   index = False , encoding = 'utf-8')
     else:
         return(df)
