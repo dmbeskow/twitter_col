@@ -32,7 +32,8 @@ def main():
     print('...')
     print('Parsing Training Data...')
     
-    keys = json.load(args.keys)
+    with open(args.keys, 'r') as infile:
+        keys = json.load(infile)
     
     consumer_key = keys['consumer_key']
     consumer_secret = keys['consumer_secret']
