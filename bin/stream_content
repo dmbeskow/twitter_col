@@ -63,7 +63,7 @@ def main():
     
     while True:
         try: 
-            stream.filter(track=terms, async = True, stall_warnings = True)
+            stream.filter(track=terms, is_async = True, stall_warnings = True)
         except KeyboardInterrupt:
             break
         
