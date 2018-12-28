@@ -30,7 +30,6 @@ def main():
     print(args)
     
     print('...')
-    print('Parsing Training Data...')
     
 
     if not os.path.exists('json'):
@@ -63,11 +62,12 @@ def main():
     
     while True:
         try: 
-            stream.filter(track=terms, is_async = True, stall_warnings = True)
+            stream.filter(track=terms, is_async = False, stall_warnings = True)
         except KeyboardInterrupt:
             break
         
         except Exception as e:
+            if 
             print(e)
             time.sleep(60)
             continue
