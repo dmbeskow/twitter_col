@@ -8,9 +8,10 @@ Created on Fri Dec 22 14:22:11 2017
 
 from twitter_col import stream_listener 
 from http.client import IncompleteRead
-import time, tweepy, sys, json
-import argparse
+import time, json
 import tweepy
+import argparse
+
 
 
 def parse_terms(file):
