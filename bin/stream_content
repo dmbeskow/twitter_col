@@ -8,7 +8,7 @@ Created on Fri Dec 22 14:22:11 2017
 
 from twitter_col import stream_listener 
 from http.client import IncompleteRead
-import time, json
+import time, json, os
 import tweepy
 import argparse
 
@@ -31,6 +31,11 @@ def main():
     
     print('...')
     print('Parsing Training Data...')
+    
+
+    if not os.path.exists('json'):
+        os.makedirs('json')
+        print("Creating 'json' directory...")
     
     with open(args.keys, 'r') as infile:
         keys = json.load(infile)

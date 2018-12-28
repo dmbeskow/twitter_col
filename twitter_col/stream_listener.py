@@ -46,8 +46,6 @@ class SListener(StreamListener):
             print("Starting New File...", time.strftime('%Y%m%d-%H%M%S'))
             self.output.close()
 		
-            shutil.move(self.output.name, "/usr0/home/dbeskow/Dropbox/Voting Data/Ukraine_GeoFence/"+self.output.name)
-		
             self.output = gzip.open('json/'+self.fprefix + '.' 
                                + time.strftime('%Y%m%d-%H%M%S') + '.json.gz', 'wt')
             self.counter = 0
