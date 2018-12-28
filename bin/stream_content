@@ -60,7 +60,7 @@ def main():
     
     print('Streaming the following terms:')
     for i,t in enumerate(terms):
-        print('\t' + str(i) + ') ' + t)
+        print('\t' + str(i + 1) + ') ' + t)
     
     if len(terms) > 8:
         exit('No more than 8 terms are allowed')
