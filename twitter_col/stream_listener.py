@@ -15,7 +15,7 @@ class SListener(StreamListener):
         self.api = api or API()
         self.counter = 0
         self.fprefix = fprefix
-        self.output  = gzip.open('json/'+fprefix + '_' 
+        self.output  = gzip.open('json/'+fprefix + '.' 
                             + time.strftime('%Y%m%d-%H%M%S') + '.json.gz', 'wt')
         self.delout  = open('delete.txt', 'a')
 
@@ -46,7 +46,7 @@ class SListener(StreamListener):
             print("Starting New File...", time.strftime('%Y%m%d-%H%M%S'))
             self.output.close()
 		
-            self.output = gzip.open('json/'+self.fprefix + '_' 
+            self.output = gzip.open('json/'+self.fprefix + '.' 
                                + time.strftime('%Y%m%d-%H%M%S') + '.json.gz', 'wt')
             self.counter = 0
 
