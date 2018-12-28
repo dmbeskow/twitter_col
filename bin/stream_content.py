@@ -3,16 +3,15 @@
 """
 Created on Fri Dec 22 14:22:11 2017
 
-@author: rstudio
+@author: dmbeskow
 """
 
 from twitter_col import stream_listener 
 from http.client import IncompleteRead
 import time, tweepy, sys, json
 import argparse
-
-## authentication
 import tweepy
+
 
 def parse_terms(file):
     terms = []
@@ -51,6 +50,9 @@ def main():
     print("Streaming started...")
     
     terms = parse_terms(args.search_terms)
+    
+    if len(terms) > 8:
+        exit('No more than 8 terms are allowed')
     
     while True:
         try: 
