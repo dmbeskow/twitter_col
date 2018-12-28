@@ -6,7 +6,7 @@ Created on Fri Dec 22 14:22:11 2017
 @author: rstudio
 """
 
-from stream_listener import SListener
+from twitter_col import stream_listener 
 from http.client import IncompleteRead
 import time, tweepy, sys, json
 import argparse
@@ -14,8 +14,13 @@ import argparse
 ## authentication
 import tweepy
 
-
-
+def parse_terms(file):
+    terms = []
+    with open(file, 'r') as infile:
+        for line in infile:
+            terms.append(line.strip('\n'))
+    return(terms)
+            
 def main():
     parser=argparse.ArgumentParser(description="Streaming Twitter API based on content")
     parser.add_argument("-keys",help="JSON File with Keys" , type=str, required=True)
@@ -40,14 +45,16 @@ def main():
     api = tweepy.API(auth, wait_on_rate_limit=True,
     				   wait_on_rate_limit_notify=True)
  
-    listen = SListener(api, args.tag)
+    listen = stream_listener.SListener(api, args.tag)
     stream = tweepy.Stream(auth, listen)
 
     print("Streaming started...")
     
+    terms = parse_terms(args.search_terms)
+    
     while True:
         try: 
-            stream.filter(track=['@RTUKnews'], async = True, stall_warnings = True)
+            stream.filter(track=terms, async = True, stall_warnings = True)
         except KeyboardInterrupt:
             break
         
