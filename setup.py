@@ -8,4 +8,11 @@ setup(name='twitter_col',
       author_email='dnbeskow@gmail.com',
       license='MIT',
       packages=['twitter_col'],
+      install_requires=[
+              'tweepy',
+              'pandas',
+              'progressbar2',
+              'textblob',
+              'matplotlib'
+              ],
       zip_safe=False)
