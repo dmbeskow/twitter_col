@@ -67,7 +67,6 @@ def main():
             break
         
         except Exception as e:
-            if 
             print(e)
             time.sleep(60)
             continue
