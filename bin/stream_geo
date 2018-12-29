@@ -17,7 +17,7 @@ def parse_coords(file):
     coords = []
     with open(file, 'r') as infile:
         line = infile.readline().rstrip('\n')
-        coords.append(line.split(','))
+        coords = coords + line.split(',')
     return(coords)
             
 def main():
