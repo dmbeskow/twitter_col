@@ -15,5 +15,5 @@ setup(name='twitter_col',
               'textblob',
               'matplotlib'
               ],
-      scripts=['bin/stream_content'],
+      scripts=['bin/stream_content', 'bin/stream_geo'],
       zip_safe=False)

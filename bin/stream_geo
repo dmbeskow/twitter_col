@@ -13,17 +13,17 @@ import argparse
 
 
 
-def parse_terms(file):
-    terms = []
+def parse_coords(file):
+    coords = []
     with open(file, 'r') as infile:
-        for line in infile:
-            terms.append(line.strip('\n'))
-    return(terms)
+        line = infile.readline().rstrip('\n')
+        coords.append(line.split(','))
+    return(coords)
             
 def main():
-    parser=argparse.ArgumentParser(description="Streaming Twitter API based on content")
+    parser=argparse.ArgumentParser(description="Streaming Twitter API based on geographic bounding box")
     parser.add_argument("-keys",help="JSON File with Keys" , type=str, required=True)
-    parser.add_argument("-search_terms",help="Text file with search terms (1 per line)" , type=str, required=True)
+    parser.add_argument("-bounding_box",help="Text file with comma seperated bounding box (A comma-separated list of longitude,latitude pairs specifying a set of bounding boxes to filter Tweets by)" , type=str, required=True)
     parser.add_argument("-tag",help="Tag that will be prepended to file names" , type=str, required=True)
     args=parser.parse_args()
     print(args)
@@ -55,19 +55,17 @@ def main():
     print("Streaming started...")
     
     
-    terms = parse_terms(args.search_terms)
+    coords = parse_coords(args.search_terms)
     
-    print('Streaming the following terms:')
-    for i,t in enumerate(terms):
-        print('\t' + str(i + 1) + ') ' + t)
-    
-    if len(terms) > 8:
-        exit('No more than 8 terms are allowed')
+    print('Streaming with the following geographic Bounding Box:')
+    print('\tlon\tlat')
+    print('1.\t ' + str(coords[0]) + '\t' + str(coords[1]))
+    print('2.\t ' + str(coords[2]) + '\t' + str(coords[3]))
         
     
     while True:
         try: 
-            stream.filter(track=terms, is_async = False, stall_warnings = True)
+            stream.filter(locations = coords, is_async = False, stall_warnings = True)
         except KeyboardInterrupt:
             break
         
