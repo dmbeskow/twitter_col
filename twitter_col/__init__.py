@@ -437,9 +437,9 @@ def get_all_network_files( files, file_prefix = 'twitter', name = 'id_str'):
 def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False, 
                        sentiment = False, keep_empty_status = True):
     """
-    This parses 'tweet' json to a pandas dataFrame. 'name' should be either
-    'id_str' or 'screen_name'.  This will choose which object is selected for
-    reply and retweet id.
+    This parses 'tweet' json to a pandas dataFrame. 
+    
+    Most field names are self explanatory, except 'id_str' is user ID.
     """
     import pandas as pd
     from textblob import TextBlob
@@ -588,9 +588,9 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
     
 def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment = False):
     """
-    This parses 'tweet' json to a pandas dataFrame. 'name' should be either
-    'id_str' or 'screen_name'.  This will choose which object is selected for
-    reply and retweet id.
+    This parses 'tweet' json to a pandas dataFrame. 
+    
+    Most field names are self explanatory, except 'id_str' is user ID.
     """
     import pandas as pd
     from textblob import TextBlob
@@ -730,8 +730,9 @@ def parse_only_text(files, file_prefix = 'twitter', to_csv = False,
                        sentiment = False, keep_empty_status = True):
     """
     This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id, 
-    tweet id, and language settings. 'name' should be either
-    'id_str' or 'screen_name'.  
+    tweet id, and language settings. 
+    
+    Most field names are self explanatory, except 'id_str' is user ID.
     """
     import pandas as pd
     from textblob import TextBlob
@@ -966,7 +967,11 @@ def fetch_profiles(api, screen_names = [], ids = []):
       run afoul of API limits (i.e. it's a good enough hack for now)
     `api` is a tweepy.API handle
     `screen_names` is a list of twitter screen names
+    
     Returns: a list of dicts representing Twitter profiles
+    
+    Note that if your data will be large, use 'fetch_profiles_file' which writes
+    to disk as it goes rather than storing it in memory.
     """
     import tweepy
     TWITTER_PROFILE_BATCH_SIZE = 100
@@ -1002,6 +1007,7 @@ def fetch_profiles_file(api, screen_names = [] , ids = [] , prefix = 'user_profi
       run afoul of API limits (i.e. it's a good enough hack for now)
     `api` is a tweepy.API handle
     `screen_names` is a list of twitter screen names
+    
     Returns: writes to disk as it goes
     """
     import tweepy, json, time
@@ -1097,6 +1103,9 @@ def check_inactive(api, uids):
     
 #%%
 def dedupe_twitter(list_of_tweets):
+    """
+    This function dedupes a list of tweets based on tweet ID.
+    """
     import progressbar
     seen = {}
     final = []
@@ -1114,6 +1123,12 @@ def dedupe_twitter(list_of_tweets):
     
 #%%
 def extract_gender(file, to_csv = False):
+    """
+    This function will try to guess the gender of the Tweet user based on name.
+    
+    This function uses the gender_guesser package.
+    
+    """
     import pandas as pd
     import json, io, gzip
     import gender_guesser.detector as gender
@@ -1160,15 +1175,20 @@ def extract_gender(file, to_csv = False):
         return(df)
     
 #%%   
-def get_followers(api, ID):
-    import tweepy
-    try:
-        followers = api.followers_ids(ID)
-        followers = fetch_profiles(api,  ids = followers)
-        return(followers)
-    except:
-        print('Scraping Error')
-        return([])
+#def get_followers(api, ID):
+#    """
+#    Gets all follower IDs for a given id, and then fetches the full user object.
+#    
+#    Returns list of user objects.
+#    """
+#    import tweepy
+#    try:
+#        followers = api.followers_ids(ID)
+#        followers = fetch_profiles(api,  ids = followers)
+#        return(followers)
+#    except:
+#        print('Scraping Error')
+#        return([])
 
 
 #%%
@@ -1212,6 +1232,12 @@ def get_friends_for_id(api, iuser_id):
     return(friends)
 #%%
 def get_all_tweets(api, id_str):
+    """
+    Gets most recent 3240 tweets for a given user. 
+    
+    Returns list of tweets.
+    
+    """
     #Twitter only allows access to a users most recent 3240 tweets with this method
 
     	
@@ -1290,9 +1316,10 @@ def remove_bad_json_data(files):
    
 def filter_tweets_by_date(files, start , stop, file_name):
     '''
-    Goes through each file and removes ill formed json 
+    Filters tweets in a single file or list of files so that they fall within
+    a given time window.  
     
-    Example: twitter_col.remove_bad_json_data(files)
+    Example: twitter_col.filter_tweets_by_date(files, '2018-01-01', '2018-06-01','outfile.json')
     '''
     import io, gzip, json
     import progressbar
@@ -1423,6 +1450,12 @@ def get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag = 'f
             
 #%%
 def plot_time(file, breaks = 'D', field = 'status_created_at',  file_name = 'time.png' ):
+    """
+    This is a quick plot function that will create the data density for tweets in a single file
+    or list of tiles.
+    
+    Prints matplotlib to screen
+    """
     import pandas as pd
     import matplotlib.pyplot as pyplot
     df = parse_twitter_json(file, to_csv = False)
