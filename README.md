@@ -1,6 +1,6 @@
 ## twitter_col: Twitter Collection, Analysis, and Visualization in Python
 
-Still in development...
+Warning...still in active development.
 
 ### Installation
 
@@ -100,6 +100,84 @@ The code below will get up to the last 3200 tweets for a user.
 ```python
 timelin = twitter_col.get_all_tweets(api, id_str)                     
 ```
+
+## Streaming Data
+
+I've built these CLI's to work in a virtual environment.  While all the rest of the normal functions are available even if you aren't in a virtual environment, the streaming command line interfaces will only work with a virtual environment.  
+
+We will create the virtual environment from the terminal in Mac or Linux or using the Windows Linux Subsystem (WSL) in Windows:
+
+```bash
+virtualenv -p python3 twitter-env
+```
+
+Then we activate the environment with the command
+
+```bash
+source twitter-env/bin/activate
+```
+
+
+
+### Streaming based on content
+
+Both of the command line interfaces require the user to provide the path to a JSON file with their Twitter credentials.  Having created your Twitter credentials, place them in a json file with the format below:
+
+```json
+{
+  "consumer_key": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "consumer_secret": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+   "access_token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+   "access_secret": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+ }
+
+```
+
+In this section I will introduce the `stream_content` command line interface (CLI) that facilitates easy access to the streaming API with content filtering.  This allows you to filter the Streaming API by any token (hashtag, screen name, text, etc).
+
+Let's say I want to stream content during the Worldcup in regards to Germany, France, and Spain.  I could use their country hashtags with the CLI command:
+
+
+```python
+stream_content key.json '#GER,#FRA,#ESP'
+```
+
+This CLI tool will create a new file every 20K tweets.  
+
+In this case, the resulting file will be named '#GER_#FRA_#ESP_YYMMDD-hhmmss.json.gz'.  In general I find it is helpful to keep your search terms in the name of the file so you can remember how you obtained the data (remember, on the command line your parameters aren't nicely stored in a file).  
+
+However, there are some times when you have a very messy list of search terms and you don't want them concatenated together to create your file name.  In this case you can invoke the -tag optional parameter to create your own file name prefix:
+
+
+```python
+stream_content key.json '#GER,#FRA,#ESP' -tag worldcup
+```
+
+This will create the filename 'worldcup.YYMMDD-hhmmss.json.gz'  
+
+### Streaming based on geographic bounding box
+
+ This allows you to filter the Streaming API by a rectangular bounding box (city, state, country, region).  If you need to find bounding boxes for specific countries, I recommend [country bounding boxes](https://gist.github.com/graydon/11198540).  
+
+Let's say we want to stream data for New York City.  We could do this with the following command
+
+
+```python
+stream_content key.json -74 40 -73 41
+```
+
+This CLI tool will create a new file every 20K tweets.  
+
+This will create a file with the filename 'geo_-74.0_40.0_-73.0_41.0.YYMMDD-hhmmss.json.gz'.  In general it is nice to keep the bounding box in the file name for future reference.  If this is cumbersome, you can once again overwite this with the optional -tag flag:
+
+
+```python
+stream_content key.json -74 40 -73 41 -tag nyc
+```
+
+which produces a file named 'nyc.YYMMDD-hhmmss.json.gz'
+
+
 
 ### General Utilities
 
