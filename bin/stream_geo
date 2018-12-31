@@ -57,7 +57,7 @@ def main():
     if args.tag is not None:
         file_prefix = args.tag
     else:
-        file_prefix = '_'.join(map(str, coords)) + '_'
+        file_prefix = '_'.join(map(str, coords)) 
  
     listen = stream_listener.SListener(api, file_prefix)
     stream = tweepy.Stream(auth, listen)
