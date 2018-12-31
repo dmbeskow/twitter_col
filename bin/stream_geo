@@ -50,14 +50,19 @@ def main():
     
     api = tweepy.API(auth, wait_on_rate_limit=True,
     				   wait_on_rate_limit_notify=True)
+    
+    coords = parse_coords(args.bbox)
+        
+    # Check if tag = None
+    if args.tag is not None:
+        file_prefix = args.tag
+    else:
+        file_prefix = '_'.join(map(str, coords))
  
-    listen = stream_listener.SListener(api, args.tag)
+    listen = stream_listener.SListener(api, file_prefix)
     stream = tweepy.Stream(auth, listen)
 
     print("Streaming started...")
-    
-    
-    coords = parse_coords(args.bbox)
     
     print('Streaming with the following geographic Bounding Box:')
     print('\tlon\tlat')
