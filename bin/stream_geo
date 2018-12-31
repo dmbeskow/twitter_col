@@ -11,22 +11,22 @@ import time, json, os
 import tweepy
 import argparse
 
+def parse_terms(string):
+    terms = string.strip('\n')
+    return(terms.split(','))
 
-
-def parse_coords(file):
+def parse_coords(string):
     coords = []
-    with open(file, 'r') as infile:
-        line = infile.readline().rstrip('\n')
-        temp = line.split(',')
-        for x in temp:
-            coords.append(float(x))
+    temp = string.split(',')
+    for x in temp:
+        coords.append(float(x))
     return(coords)
             
 def main():
     parser=argparse.ArgumentParser(description="Streaming Twitter API based on geographic bounding box.  \n The keys are imported from a JSON File, and coordinates are imported from a comma separated value file")
-    parser.add_argument("-keys",help="JSON File with Twitter Key ('consumer_key','consumer_secret','access_token','access_secret')" , type=str, required=True)
-    parser.add_argument("-bbox",help="Text file with comma seperated bounding box (A comma-separated list of longitude,latitude pairs specifying a set of bounding boxes to filter Tweets by)" , type=str, required=True)
-    parser.add_argument("-tag",help="Tag that will be prepended to file names" , type=str, required=True)
+    parser.add_argument("keys",help="JSON File with Twitter Key ('consumer_key','consumer_secret','access_token','access_secret')" , type=str)
+    parser.add_argument("bbox",help="A comma-separated list of longitude,latitude pairs specifying a set of bounding boxes to filter Tweets by)" , type=str)
+    parser.add_argument("-tag",help="Tag that will be prepended to file names" , type=str)
     args=parser.parse_args()
     print(args)
     
