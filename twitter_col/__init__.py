@@ -247,12 +247,12 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = False, name = 'id_str
                     continue
                 if tweet is not None:
                     u = get_urls(tweet)
-                if len(u) > 0:
-                    for url in u:
-                        final['user'].append(tweet['user'][name])
-                        final['url'].append(url)
-                        final['status_id'].append(tweet['id_str'])
-                        final['date'].append(tweet['created_at'])
+                    if len(u) > 0:
+                        for url in u:
+                            final['user'].append(tweet['user'][name])
+                            final['url'].append(url)
+                            final['status_id'].append(tweet['id_str'])
+                            final['date'].append(tweet['created_at'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_urls_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
