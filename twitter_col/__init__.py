@@ -47,9 +47,10 @@ def get_urls(tweet):
     empty list.
     """
     url = []
-    if len(tweet['entities']['urls']) > 0:
-        for u in tweet['entities']['urls']:
-            url.append(u['expanded_url'])
+    if 'urls' in tweet['entities']: 
+        if len(tweet['entities']['urls']) > 0:
+            for u in tweet['entities']['urls']:
+                url.append(u['expanded_url'])
     return(url)
 #%%
 def get_emojis(tweet):
