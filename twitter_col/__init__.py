@@ -1566,3 +1566,40 @@ def extract_coordinates(files, to_csv = False, file_prefix = 'topic'):
                   index = False , encoding = 'utf-8')
     else:
         return(df)
+
+
+#%%
+
+def combine_dedupe(list_of_files, prefix = 'total_tweets'):
+    import json, io, gzip
+    import progressbar
+    
+    seen = {}
+    with gzip.open(prefix + '.json.gz', 'wt') as outfile:
+        bar = progressbar.ProgressBar()
+        for f in bar(list_of_files):
+            if '.gz' in f:
+                infile = io.TextIOWrapper(gzip.open(f, 'r'))
+            else:
+                infile = open(f, 'r')
+    
+            for line in bar(infile):
+                if line != '\n':
+                    try:
+                        t = json.loads(line)
+                    except:
+                        continue
+                        
+                    if 'status' in t.keys():
+                        temp = t['status']
+                        getRid = t.pop('status', 'Entry not found')
+                        temp['user'] = t
+                        t = temp
+                        
+                    tweet_id = t['id']
+                    if tweet_id not in seen:
+                        seen[id] = True
+                        outfile.write(json.dumps(t + '\n'))
+                    
+
+
