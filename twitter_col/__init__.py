@@ -1587,19 +1587,20 @@ def combine_dedupe(list_of_files, prefix = 'total_tweets'):
                 if line != '\n':
                     try:
                         t = json.loads(line)
+                        if 'status' in t.keys():
+                            temp = t['status']
+                            getRid = t.pop('status', 'Entry not found')
+                            temp['user'] = t
+                            t = temp
+                        
+                        tweet_id = t['id']
+                        if tweet_id not in seen:
+                            seen[id] = True
+                            outfile.write(json.dumps(t) + '\n')
                     except:
                         continue
                         
-                    if 'status' in t.keys():
-                        temp = t['status']
-                        getRid = t.pop('status', 'Entry not found')
-                        temp['user'] = t
-                        t = temp
-                        
-                    tweet_id = t['id']
-                    if tweet_id not in seen:
-                        seen[id] = True
-                        outfile.write(json.dumps(t) + '\n')
+
                     
 
 
