@@ -1583,7 +1583,7 @@ def combine_dedupe(list_of_files, prefix = 'total_tweets'):
             else:
                 infile = open(f, 'r')
     
-            for line in bar(infile):
+            for line in infile:
                 if line != '\n':
                     try:
                         t = json.loads(line)
