@@ -1599,7 +1599,7 @@ def combine_dedupe(list_of_files, prefix = 'total_tweets'):
                     tweet_id = t['id']
                     if tweet_id not in seen:
                         seen[id] = True
-                        outfile.write(json.dumps(t + '\n'))
+                        outfile.write(json.dumps(t) + '\n')
                     
 
 
