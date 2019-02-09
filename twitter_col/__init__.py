@@ -242,7 +242,7 @@ def extract_urls(files, file_prefix = 'twitter',  to_csv = False, name = 'id_str
         for line in infile:
              if line != '\n':
                 try:
-                    tweet = check_tweet(json.loads(line))
+                    tweet = json.loads(line)
                 except:
                     continue
                 if tweet is not None:
