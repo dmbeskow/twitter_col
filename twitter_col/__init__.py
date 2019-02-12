@@ -480,6 +480,9 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
           "status_id" : [],
           "status_created_at": [],
           "status_retweet_count": [],
+          "status_quote_count": [],
+          "status_favorite_count": [],
+          "status_reply_count": [],
           "retweet_status_id": [],
           "reply_to_user_id": [],
           "reply_to_status_id": [],
@@ -533,6 +536,9 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
                     data['status_id'].append(t['id'])
                     data['status_created_at'].append(t['created_at'])
                     data['status_retweet_count'].append(t['retweet_count'])
+                    data['status_favorite_count'].append(t['favorite_count'])
+                    data['status_reply_count'].append(t['reply_count'])
+                    data['status_quote_count'].append(t['quote_count'])
                     data['reply_to_user_id'].append(t['in_reply_to_user_id_str'])
                     data['reply_to_status_id'].append(t['in_reply_to_status_id_str'])
                     
