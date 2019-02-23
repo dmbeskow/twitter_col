@@ -113,7 +113,7 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
     import pandas as pd
     if not isinstance(files, list):
        files = [files]
-    final = {'date': [],'status_id': [],'mention': [], 'user': [] }
+    final = {'date': [],'status_id': [],'mention': [], 'user': [] , 'screen_name':[]}
     for f in files:
         if '.gz' in f:
             infile = io.TextIOWrapper(gzip.open(f, 'r'))
@@ -137,6 +137,7 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
                         final['mention'].append(mention)
                         final['status_id'].append(tweet['id_str'])
                         final['date'].append(tweet['created_at'])
+                        final['screen_name'].append(tweet['screen_name'])
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_mentions_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
