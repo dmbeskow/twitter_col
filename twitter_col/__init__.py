@@ -35,9 +35,10 @@ def get_mention(tweet, kind = 'id_str'):
     it returns an empty list.
     """
     men = []
-    if len(tweet['entities']['user_mentions']) > 0:
-        for m in tweet['entities']['user_mentions']:
-            men.append(m[kind])
+    if 'user_mentions' in tweet['entities']:
+        if len(tweet['entities']['user_mentions']) > 0:
+            for m in tweet['entities']['user_mentions']:
+                men.append(m[kind])
     return(men)
     
 #%%
@@ -104,7 +105,7 @@ def get_reply_conversation(files, status_ids):
     
     
 #%%
-def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = True):
+def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = False):
     """
    Creates mention edgelist.  Can return data.frame or write to csv.  
    
@@ -147,7 +148,7 @@ def extract_mentions(files, file_prefix = 'twitter', name = 'id_str', to_csv = T
     
 #%%
 def extract_hashtags(files, file_prefix = 'twitter', name = 'id_str', 
-                     to_csv = True):
+                     to_csv = False):
     """
    Creates hashtag edgelist (either user to hashtag OR comention).  
    Can return data.frame or write to csv.  
@@ -811,7 +812,7 @@ def parse_only_text(files, file_prefix = 'twitter', to_csv = False,
 
         
 def get_edgelist_file(file, mentions = True, replies = True, retweets = True, 
-                 urls = False, hashtags = False, to_csv = True, kind = 'screen_name'):
+                 urls = False, hashtags = False, to_csv = False, kind = 'screen_name'):
     ''' 
     Builds an agent x agent edgelist of a Tweet json (normal or gzipped)
     '''
@@ -897,7 +898,7 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
 #%%
         
 def get_edgelist_from_list(tweet_list, mentions = True, replies = True, retweets = True, 
-                 urls = False, hashtags = False, to_csv = True):
+                 urls = False, hashtags = False, to_csv = False):
     ''' 
     Builds an agent x agent edgelist of a tweet list.
     '''

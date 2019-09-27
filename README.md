@@ -163,7 +163,7 @@ Let's say we want to stream data for New York City.  We could do this with the f
 
 
 ```python
-stream_content key.json -74 40 -73 41
+stream_geo key.json -74 40 -73 41
 ```
 
 This CLI tool will create a new file every 20K tweets.  
@@ -172,7 +172,7 @@ This will create a file with the filename 'geo_-74.0_40.0_-73.0_41.0.YYMMDD-hhmm
 
 
 ```python
-stream_content key.json -74 40 -73 41 -tag nyc
+stream_geo key.json -74 40 -73 41 -tag nyc
 ```
 
 which produces a file named 'nyc.YYMMDD-hhmmss.json.gz'
