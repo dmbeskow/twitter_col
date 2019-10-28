@@ -332,7 +332,10 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
             infile = open(f, 'r')
         for line in infile:
             if line != '\n':
-                tweet = json.loads(line)
+                try:
+                    tweet = json.loads(line)
+                except:
+                    continue
                 h = get_hash(tweet)
                 if len(h) > 1:
                     combo = list(itertools.combinations(h, 2))
