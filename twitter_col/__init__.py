@@ -331,16 +331,19 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
         else:
             infile = open(f, 'r')
         for line in infile:
-            tweet = json.loads(line)
-            h = get_hash(tweet)
-            if len(h) > 1:
-                combo = list(itertools.combinations(h, 2))
-                for pair in combo:
-                    final['user'].append(tweet['user'][name])
-                    final['hash1'].append(pair[0])
-                    final['hash2'].append(pair[1])
-                    final['status_id'].append(tweet['id_str'])
-                    final['date'].append(tweet['created_at'])
+            try:
+                tweet = json.loads(line)
+                h = get_hash(tweet)
+                if len(h) > 1:
+                    combo = list(itertools.combinations(h, 2))
+                    for pair in combo:
+                        final['user'].append(tweet['user'][name])
+                        final['hash1'].append(pair[0])
+                        final['hash2'].append(pair[1])
+                        final['status_id'].append(tweet['id_str'])
+                        final['date'].append(tweet['created_at'])
+            except:
+                continue
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_hashComention_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
