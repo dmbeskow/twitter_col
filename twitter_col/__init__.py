@@ -311,7 +311,7 @@ def extract_media(files,   file_prefix = 'twitter',to_csv = True, name = 'id_str
                   'expanded_url','media_url','media_url_https','user','status_id','date']])        
 #%%
 def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str', 
-                     to_csv = True):
+                     to_csv = False):
     """
    Creates hashtag edgelist (either user to hashtag OR comention).  
    Can return data.frame or write to csv.  
@@ -331,7 +331,7 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
         else:
             infile = open(f, 'r')
         for line in infile:
-            try:
+            if line != '\n':
                 tweet = json.loads(line)
                 h = get_hash(tweet)
                 if len(h) > 1:
@@ -342,8 +342,8 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
                         final['hash2'].append(pair[1])
                         final['status_id'].append(tweet['id_str'])
                         final['date'].append(tweet['created_at'])
-            except:
-                continue
+#            except:
+#                continue
     df = pd.DataFrame(final)
     if to_csv:
         df.to_csv(file_prefix + '_hashComention_' + time.strftime('%Y%m%d-%H%M%S')+'.csv', 
