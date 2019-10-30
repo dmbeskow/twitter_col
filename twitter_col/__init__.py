@@ -547,12 +547,24 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
                     
                     if 'extended_tweet' in t.keys():
                         if 'full_text' in t['extended_tweet']:
-                            data['status_text'].append(t['extended_tweet']['full_text'])
+                            text = t['extended_tweet']['full_text']
                     elif 'full_text' in t.keys():
-                        data['status_text'].append(t['full_text'])
+                        text = t['full_text']
                     else:
-                        data['status_text'].append(t['text'])
-            
+                        text = t['text']
+                    if 'retweeted_status' in t.keys():
+                        retweet_prefix = text.split(':')[0] + ': ' 
+                        rt = t['retweeted_status']
+                        if 'extended_tweet' in rt.keys():
+                            if 'full_text' in rt['extended_tweet']:
+                                text = rt['extended_tweet']['full_text']
+                        elif 'full_text' in rt.keys():
+                            text = rt['full_text']
+                        else:
+                            text = rt['text']
+                    full_text = retweet_prefix + text
+                    data['status_text'].append(full_text)
+                    
                     if 'possibly_sensitive' in t.keys():
                          data['status_possibly_sensitive'].append(t['possibly_sensitive'])
                     else:
@@ -1612,6 +1624,36 @@ def combine_dedupe(list_of_files, prefix = 'total_tweets'):
                         continue
                         
 
-                    
+#%%
+def get_user_map(files):
+    '''
+    Function provided by Tom Magelinski
+    
+    Creates mapping from old screen names to new screen names based on retweet data
+    '''
+    if not isinstance(files, list):
+        files = [files]
+    user_map = {}
+    for file in files:
+        with gzip.open(file) as f:
+            for line in f:
+                t = json.loads(line)
+                if 'retweeted_status' in t.keys():
+                    if 'extended_tweet' in t.keys():
+                        if 'full_text' in t['extended_tweet']:
+                            text = t['extended_tweet']['full_text']
+                    elif 'full_text' in t.keys():
+                        text = t['full_text']
+                    else:
+                        text = t['text']
+
+                    old_username = text.split('RT ')[1].split(':')[0][1:]
+                    new_username = t['retweeted_status']['user']['screen_name']
+                    if old_username != new_username:
+                        if old_username not in user_map.keys():
+                            user_map[old_username] = [new_username]
+                        if new_username not in user_map[old_username]:
+                            user_map[old_username] = user_map[old_username] + [new_username] 
+    return user_map
 
 
