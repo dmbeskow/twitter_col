@@ -270,7 +270,7 @@ def extract_media(files,   file_prefix = 'twitter',to_csv = True, name = 'id_str
     import json, io, gzip, time
     import pandas as pd
     import progressbar
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'date': [],'type':[] , 'display_url': [], 'expanded_url': [], 'media_url': [], 'media_url_https': [],  'user': [] , 'status_id': []}
     for f in files:
@@ -321,7 +321,7 @@ def extract_hash_comention(files, file_prefix = 'twitter', name = 'id_str',
     import pandas as pd
     import itertools
     import progressbar
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'hash1': [],'hash2': [], 'user': [] , 'status_id': [], 'date':  []}
     bar = progressbar.ProgressBar()
@@ -361,7 +361,7 @@ def extract_retweet_network(files, file_prefix = 'twitter', name = 'id_str', to_
     """
     import pandas as pd
     import time, json, io, gzip
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'date': [],'status_id': [],'retweeter': [], 'retweeted': [] }
     for f in files:
@@ -390,7 +390,7 @@ def extract_reply_network(files, file_prefix = 'twitter', name = 'id_str', to_cs
     """
     import pandas as pd
     import time, json, io, gzip
-    if type(files) != 'list':
+    if not isinstance(files, list):
        files = [files]
     final = {'date': [],'status_id': [],'reply_from': [], 'reply_to': [] }
     for f in files:
