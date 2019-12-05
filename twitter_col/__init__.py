@@ -735,6 +735,7 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
 
         
     df = pd.DataFrame(data, dtype = str)
+    df.loc[df['status_isquote'] == 'True', 'status_isretweet'] = 'False'
     
     if sentiment:
         sent = []
