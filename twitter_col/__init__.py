@@ -483,6 +483,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
         "lon" : [],
         "status_possibly_sensitive" : [],
          "status_isretweet" : [],
+         "status_isquote" : [],
           "status_lang" : [],
           "status_id" : [],
           "status_created_at": [],
@@ -558,6 +559,12 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
                     else:
                         data['status_possibly_sensitive'].append(False)
 
+                    if 'is_quote_status' in t.keys():
+                        data['status_isquote'].append(t['is_quote_status'])
+                    else:
+                        data['status_isquote'].append(False)
+
+                            
 
                     if 'retweeted_status' in t.keys():
                         data['retweet_status_id'].append(t['retweeted_status']['id_str'])
@@ -634,6 +641,7 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
         "lon" : [],
         "status_possibly_sensitive" : [],
          "status_isretweet" : [],
+         "status_isquote" : [],
           "status_lang" : [],
           "status_id" : [],
           "status_created_at": [],
@@ -698,6 +706,11 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
                  data['status_possibly_sensitive'].append(t['possibly_sensitive'])
             else:
                 data['status_possibly_sensitive'].append(False)
+                
+            if 'is_quote_status' in t.keys():
+                data['status_isquote'].append(t['is_quote_status'])
+            else:
+                data['status_isquote'].append(False)
     
     
             if 'retweeted_status' in t.keys():
@@ -1645,3 +1658,23 @@ def get_user_map(files):
     return user_map
 
 
+#%%
+def break_into_weeks(file, directory = 'weeks'):
+    import io, gzip, json
+    import dateutil.parser
+    
+    final = {}
+    with io.TextIOWrapper(gzip.open(file, 'r')) as infile:
+        for line in infile:
+            t = json.loads(line)
+            created_at = dateutil.parser.parse(t['created_at'])
+            month = created_at.isocalendar()
+            week = str(month[0]) + '_' + str(month[1])
+            if week in final:
+                final[week].append(t)
+            else:
+                final[week] = [t]
+    for month in final:
+        with open(directory + '/' + month + '.json', 'w') as outfile:
+            for tweet in final[month]:
+                outfile.write(json.dumps(tweet) + '\n')
