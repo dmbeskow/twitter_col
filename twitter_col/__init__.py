@@ -587,6 +587,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
 
 
     df = pd.DataFrame(data, dtype = str)
+    df.loc[df['status_isquote'] == 'True', 'status_isretweet'] = 'False'
 
     if sentiment:
         sent = []
