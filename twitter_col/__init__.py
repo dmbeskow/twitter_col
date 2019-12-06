@@ -566,7 +566,7 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
 
                             
 
-                    if 'retweeted_status' in t.keys():
+                    if 'retweeted_status' in t.keys() and str(t['is_quote_status']) == 'False':
                         data['retweet_status_id'].append(t['retweeted_status']['id_str'])
                         data['status_isretweet'].append(True)
                     else:
@@ -587,7 +587,6 @@ def parse_twitter_json(files, file_prefix = 'twitter', to_csv = False,
 
 
     df = pd.DataFrame(data, dtype = str)
-    df.loc[df['status_isquote'] == 'True', 'status_isretweet'] = 'False'
 
     if sentiment:
         sent = []
@@ -714,7 +713,7 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
                 data['status_isquote'].append(False)
     
     
-            if 'retweeted_status' in t.keys():
+            if 'retweeted_status' in t.keys() and str(t['is_quote_status']) == 'False':
                 data['retweet_status_id'].append(t['retweeted_status']['id_str'])
                 data['status_isretweet'].append(True)
             else:
@@ -736,7 +735,6 @@ def parse_twitter_list(List, file_prefix = 'twitter', to_csv = False, sentiment 
 
         
     df = pd.DataFrame(data, dtype = str)
-    df.loc[df['status_isquote'] == 'True', 'status_isretweet'] = 'False'
     
     if sentiment:
         sent = []
