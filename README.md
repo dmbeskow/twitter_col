@@ -183,11 +183,6 @@ which produces a file named 'nyc.YYMMDD-hhmmss.json.gz'
 
 A list of functions is provided below:
 
-| Tables   |      Are      |  Cool |
-|----------|:-------------:|------:|
-| col 1 is |  left-aligned | $1600 |
-| col 2 is |    centered   |   $12 |
-| col 3 is | right-aligned |    $1 |
 
 | Function | Description |
 |----------|-------------|
@@ -213,7 +208,7 @@ A list of functions is provided below:
 | `get_edgelist_file`  |  Builds an agent x agent edgelist of a Tweet json (normal or gzipped) |
 | `get_edgelist_from_list`  |  Builds an agent x agent edgelist of a tweet list. |
 | `get_emojis`  |  Returns list of emoji's for a tweet.  If no emoji's, returns empty list |
-| `get_empty_status()``  |  This function returns an empty or Null status.  This is used to attach to the dictionary of any account that has never tweeted |
+| `get_empty_status()`  |  This function returns an empty or Null status.  This is used to attach to the dictionary of any account that has never tweeted |
 | `get_followers_for_id`  |  Gets ALL follower IDS for a given user Adapted from Mike K's code. |
 | `get_friend_follower_edgelist`  |  This function loops through a directory and builds friend/follower network in an edgelist format. |
 | `get_friends_for_id`  |  Gets ALL friend IDS for a given user Adapted from Mike K's code. |
