@@ -179,13 +179,12 @@ which produces a file named 'nyc.YYMMDD-hhmmss.json.gz'
 
 
 
-### General Utilities
+### Summary of functions
 
-Below are some general utilities.
+A list of functions is provided below:
 
-This will convert twitter date strings to python date-time objects.  We can captures this and bring it back into Python
-
-```python
-dates = twitter_col.convert_dates(df['status_created_at'].tolist())
-df['dates'] = dates
-```
+| Tables   |      Are      |  Cool |
+|----------|:-------------:|------:|
+| col 1 is |  left-aligned | $1600 |
+| col 2 is |    centered   |   $12 |
+| col 3 is | right-aligned |    $1 |
