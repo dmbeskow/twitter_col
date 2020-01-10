@@ -199,33 +199,32 @@ A list of functions is provided below:
 | `extract_emoji` | Creates  csv containing all emojis in a set of tweets  |
 | `extract_gender` | This function will try to guess the gender of the Tweet user based on name. This function uses the gender_guesser package.  |
 | `extract_hash_comention` |     Creates hashtag edgelist (either user to hashtag OR comention).  |
-| extract_hashtags | Creates hashtag edgelist (either user to hashtag OR comention). |
-| extract_media  |  Creates  csv containing all URLS in a set of tweets |
-| extract_mentions  |  Creates mention edgelist.  Can return data.frame or write to csv. |
-| extract_reply_network  |  Creates reply edgelist.  Can return data.frame or write to csv. |
-| extract_retweet_network  |  Creates retweet edgelist.  Can return data.frame or write to csv. |
-| extract_urls  |  Creates  csv containing all URLS in a set of tweets |
-| fetch_profiles  |  A wrapper method around tweepy.API.lookup_users that handles the batch lookup of screen_names.  Returns list of users. |
-| fetch_profiles_file  |  A wrapper method around tweepy.API.lookup_users that handles the batch lookup of screen_names (saving to file as it goes).  This is better for long lists with memory constraints. |
-| filter_tweets_by_date  |  Filters tweets in a single file or list of files so that they fall within a given time window.   |
-| get_all_network_files  |  This is a single command to get the hashtag network, comention network, and retweet network |
-| get_all_tweets  |  Gets most recent 3240 tweets for a given user. Returns list of tweets. |
-| get_edgelist_file  |  Builds an agent x agent edgelist of a Tweet json (normal or gzipped) |
-| get_edgelist_from_list  |  Builds an agent x agent edgelist of a tweet list. |
-| get_emojis  |  Returns list of emoji's for a tweet.  If no emoji's, returns empty list |
-| get_empty_status()  |  This function returns an empty or Null status.  This is used to attach to the dictionary of any account that has never tweeted |
-| get_followers_for_id  |  Gets ALL follower IDS for a given user
-    Adapted from Mike K's code. |
-| get_friend_follower_edgelist  |  This function loops through a directory and builds friend/follower network in an edgelist format. |
-| get_friends_for_id  |  Gets ALL friend IDS for a given user Adapted from Mike K's code. |
-| get_hash  |  Returns list of hashtags in a tweet.  If no hashtags, it returns an empty list. |
-| get_mention  |  Returns list of mentions in a tweet.  If no hashtags, it returns an empty list. |
-| get_reply_conversation  |  Recursively extracts replies and replies to replies in order to pull all replies that are connected to a given status_id(s) |
-| get_sensitivity(value) | Returns sensitivity  |
-| get_urls  |  Returns list of expanded urls in a tweet.  If no urls, returns an empty list. |
-| get_user_map  |  Function provided by Tom Magelinski Creates mapping from old screen names to new screen names based on retweet data |
-| parse_only_ids  |  This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id, tweet id, and language settings. 'name' should be either 'id_str' or 'screen_name'. |
-| parse_only_text  |  This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id, tweet id, and language settings. |
-| parse_twitter_json  |  This parses 'tweet' json to a pandas dataFrame. |
-| plot_time  |  This is a quick plot function that will create the data density for tweets in a single file or list of tiles. Prints matplotlib to screen |
-| rehydrate  |  A wrapper method around tweepy.API.statuses_lookup that handles the batch lookup of Tweet IDs. |
+| `extract_hashtags` | Creates hashtag edgelist (either user to hashtag OR comention). |
+| `extract_media`  |  Creates  csv containing all URLS in a set of tweets |
+| `extract_mentions`  |  Creates mention edgelist.  Can return data.frame or write to csv. |
+| `extract_reply_network`  |  Creates reply edgelist.  Can return data.frame or write to csv. |
+| `extract_retweet_network`  |  Creates retweet edgelist.  Can return data.frame or write to csv. |
+| `extract_urls`  |  Creates  csv containing all URLS in a set of tweets |
+| `fetch_profiles`  |  A wrapper method around tweepy.API.lookup_users that handles the batch lookup of screen_names.  Returns list of users. |
+| `fetch_profiles_file`  |  A wrapper method around tweepy.API.lookup_users that handles the batch lookup of screen_names (saving to file as it goes).  This is better for long lists with memory constraints. |
+| `filter_tweets_by_date`  |  Filters tweets in a single file or list of files so that they fall within a given time window.   |
+| `get_all_network_files`  |  This is a single command to get the hashtag network, comention network, and retweet network |
+| `get_all_tweets`  |  Gets most recent 3240 tweets for a given user. Returns list of tweets. |
+| `get_edgelist_file`  |  Builds an agent x agent edgelist of a Tweet json (normal or gzipped) |
+| `get_edgelist_from_list`  |  Builds an agent x agent edgelist of a tweet list. |
+| `get_emojis`  |  Returns list of emoji's for a tweet.  If no emoji's, returns empty list |
+| `get_empty_status()``  |  This function returns an empty or Null status.  This is used to attach to the dictionary of any account that has never tweeted |
+| `get_followers_for_id`  |  Gets ALL follower IDS for a given user Adapted from Mike K's code. |
+| `get_friend_follower_edgelist`  |  This function loops through a directory and builds friend/follower network in an edgelist format. |
+| `get_friends_for_id`  |  Gets ALL friend IDS for a given user Adapted from Mike K's code. |
+| `get_hash`  |  Returns list of hashtags in a tweet.  If no hashtags, it returns an empty list. |
+| `get_mention` |  Returns list of mentions in a tweet.  If no hashtags, it returns an empty list. |
+| `get_reply_conversation`  |  Recursively extracts replies and replies to replies in order to pull all replies that are connected to a given status_id(s) |
+| `get_sensitivity` | Returns sensitivity  |
+| `get_urls`  |  Returns list of expanded urls in a tweet.  If no urls, returns an empty list. |
+| `get_user_map`  |  Function provided by Tom Magelinski Creates mapping from old screen names to new screen names based on retweet data |
+| `parse_only_ids`  |  This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id, tweet id, and language settings. 'name' should be either 'id_str' or 'screen_name'. |
+| `parse_only_text`  |  This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id, tweet id, and language settings. |
+| `parse_twitter_json`  |  This parses 'tweet' json to a pandas dataFrame. |
+| `plot_time`  |  This is a quick plot function that will create the data density for tweets in a single file or list of tiles. Prints matplotlib to screen |
+| `rehydrate`  |  A wrapper method around tweepy.API.statuses_lookup that handles the batch lookup of Tweet IDs. |
