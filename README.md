@@ -188,3 +188,173 @@ A list of functions is provided below:
 | col 1 is |  left-aligned | $1600 |
 | col 2 is |    centered   |   $12 |
 | col 3 is | right-aligned |    $1 |
+
+| Function | Description |
+|----------|:-------------:|
+| `check_tweet`  | Takes user objects and reverses them to create status objects  |
+| combine_dedupe | Combine and Dedupe list of Twitter JSON Files  |
+| convert_dates  | This function converts twitter dates to python date objects  |
+| dedupe_twitter |  This function dedupes a list of tweets based on tweet ID.  |
+| extract_coordinates | Extracts Geo Coordinates to Pandas Dataframe  |
+| extract_emoji | Creates  csv containing all emojis in a set of tweets  |
+| extract_gender | This function will try to guess the gender of the Tweet user based on name. This function uses the gender_guesser package.  |
+
+extract_hash_comention(files, file_prefix='twitter', name='id_str', to_csv=False)
+    Creates hashtag edgelist (either user to hashtag OR comention).  
+    Can return data.frame or write to csv.
+
+extract_hashtags(files, file_prefix='twitter', name='id_str', to_csv=False)
+    Creates hashtag edgelist (either user to hashtag OR comention).  
+    Can return data.frame or write to csv.
+
+extract_media(files, file_prefix='twitter', to_csv=True, name='id_str')
+    Creates  csv containing all URLS in a set of tweets
+
+extract_mentions(files, file_prefix='twitter', name='id_str', to_csv=False)
+    Creates mention edgelist.  Can return data.frame or write to csv.
+
+extract_reply_network(files, file_prefix='twitter', name='id_str', to_csv=True)
+    Creates reply edgelist.  Can return data.frame or write to csv.
+
+extract_retweet_network(files, file_prefix='twitter', name='id_str', to_csv=True)
+    Creates retweet edgelist.  Can return data.frame or write to csv.
+
+extract_urls(files, file_prefix='twitter', to_csv=False, name='id_str')
+    Creates  csv containing all URLS in a set of tweets
+
+fetch_profiles(api, screen_names=[], ids=[])
+    I copied this from:
+        https://github.com/unitedstates/congress-legislators/blob/master/scripts/social/twitter.py
+
+    A wrapper method around tweepy.API.lookup_users that handles the batch lookup of
+      screen_names. Assuming number of screen_names < 10000, this should not typically
+      run afoul of API limits (i.e. it's a good enough hack for now)
+    `api` is a tweepy.API handle
+    `screen_names` is a list of twitter screen names
+
+    Returns: a list of dicts representing Twitter profiles
+
+    Note that if your data will be large, use 'fetch_profiles_file' which writes
+    to disk as it goes rather than storing it in memory.
+
+fetch_profiles_file(api, screen_names=[], ids=[], prefix='user_profiles')
+    I copied this from:
+        https://github.com/unitedstates/congress-legislators/blob/master/scripts/social/twitter.py
+
+    A wrapper method around tweepy.API.lookup_users that handles the batch lookup of
+      screen_names. Assuming number of screen_names < 10000, this should not typically
+      run afoul of API limits (i.e. it's a good enough hack for now)
+    `api` is a tweepy.API handle
+    `screen_names` is a list of twitter screen names
+
+    Returns: writes to disk as it goes
+
+filter_tweets_by_date(files, start, stop, file_name)
+    Filters tweets in a single file or list of files so that they fall within
+    a given time window.  
+
+    Example: twitter_col.filter_tweets_by_date(files, '2018-01-01', '2018-06-01','outfile.json')
+
+get_all_network_files(files, file_prefix='twitter', name='id_str')
+    This is a single command to get the hashtag network, comention network, and
+    retweet network
+
+get_all_tweets(api, id_str)
+    Gets most recent 3240 tweets for a given user.
+
+    Returns list of tweets.
+
+get_edgelist_file(file, mentions=True, replies=True, retweets=True, urls=False, hashtags=False, to_csv=False, kind='screen_name')
+    Builds an agent x agent edgelist of a Tweet json (normal or gzipped)
+
+get_edgelist_from_list(tweet_list, mentions=True, replies=True, retweets=True, urls=False, hashtags=False, to_csv=False)
+    Builds an agent x agent edgelist of a tweet list.
+
+get_emojis(tweet)
+    Returns list of emoji's for a tweet.  If no emoji's, returns empty list
+
+get_empty_status()
+    This function returns an empty or Null status.  This is used to attach to
+    the dictionary of any account that has never tweeted
+
+get_followers_for_id(api, iuser_id)
+    Gets ALL follower IDS for a given user
+    Adapted from Mike K's code.
+
+get_friend_follower_edgelist(fol_directory, frd_directory, follower_tag='followers', friend_tag='friends', column_label='id_str')
+    This function loops through a directory and builds friend/follower network
+    in an edgelist format.
+
+    Files must be uncompressed (not gzipped)
+
+    kind can be 'both', 'follower', 'friend'
+
+    Returns an edgelist pandas data frame.
+
+get_friends_for_id(api, iuser_id)
+    Gets ALL friend IDS for a given user
+    Adapted from Mike K's code.
+
+get_hash(tweet)
+    Returns list of hashtags in a tweet.  If no hashtags,
+    it returns an empty list.
+
+get_mention(tweet, kind='id_str')
+    Returns list of mentions in a tweet.  If no hashtags,
+    it returns an empty list.
+
+get_reply_conversation(files, status_ids)
+    Recursively extracts replies and replies to replies in order to pull all
+    replies that are connected to a given status_id(s)
+
+get_sensitivity(value)
+    #%%
+
+get_urls(tweet)
+    Returns list of expanded urls in a tweet.  If no urls, returns an
+    empty list.
+
+get_user_map(files)
+    Function provided by Tom Magelinski
+
+    Creates mapping from old screen names to new screen names based on retweet data
+
+parse_only_ids(files)
+    This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id,
+    tweet id, and language settings. 'name' should be either
+    'id_str' or 'screen_name'.
+
+parse_only_text(files, file_prefix='twitter', to_csv=False, sentiment=False, keep_empty_status=True)
+    This parses 'tweet' json to a pandas dataFrame, but only gets the text, user id,
+    tweet id, and language settings.
+
+    Most field names are self explanatory, except 'id_str' is user ID.
+
+parse_twitter_json(files, file_prefix='twitter', to_csv=False, sentiment=False, keep_empty_status=True)
+    This parses 'tweet' json to a pandas dataFrame.
+
+    Most field names are self explanatory, except 'id_str' is user ID.
+
+parse_twitter_list(List, file_prefix='twitter', to_csv=False, sentiment=False)
+    This parses 'tweet' json to a pandas dataFrame.
+
+    Most field names are self explanatory, except 'id_str' is user ID.
+
+plot_time(file, breaks='D', field='status_created_at', file_name='time.png')
+    This is a quick plot function that will create the data density for tweets in a single file
+    or list of tiles.
+
+    Prints matplotlib to screen
+
+rehydrate(api, ids=[])
+    I adapted this from :
+        https://github.com/unitedstates/congress-legislators/blob/master/scripts/social/twitter.py
+
+    A wrapper method around tweepy.API.statuses_lookup that handles the batch lookup of
+      Tweet IDs.
+    Returns: a list of dicts representing Twitter profiles
+
+remove_bad_json_data(files)
+    Goes through each file and removes ill formed json
+
+    Example: twitter_col.remove_bad_json_data(files)
