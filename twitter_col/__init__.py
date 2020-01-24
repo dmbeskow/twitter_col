@@ -1151,7 +1151,7 @@ def dedupe_twitter(list_of_tweets):
 #%%
 def dedupe_twitter_by_user(list_of_tweets):
     """
-    This function dedupes a list of tweets based on tweet ID.
+    This function dedupes a list of tweets based on user ID.
     """
     import progressbar
     seen = {}
