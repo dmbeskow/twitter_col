@@ -1148,7 +1148,28 @@ def dedupe_twitter(list_of_tweets):
             continue
         
     return(final)
-    
+#%%
+def dedupe_twitter_by_user(list_of_tweets):
+    """
+    This function dedupes a list of tweets based on tweet ID.
+    """
+    import progressbar
+    seen = {}
+    final = []
+    bar = progressbar.ProgressBar()
+    for tweet in bar(list_of_tweets):
+        try:
+            if 'user' in tweet:
+                id = tweet['user']["id"]
+            else:
+                id = tweet['id']
+            if id not in seen:
+                seen[id] = True
+                final.append(tweet)
+        except:
+            continue
+        
+    return(final)    
 #%%
 def extract_gender(file, to_csv = False):
     """
