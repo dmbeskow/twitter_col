@@ -1680,3 +1680,29 @@ def break_into_weeks(file, directory = 'weeks'):
         with open(directory + '/' + month + '.json', 'w') as outfile:
             for tweet in final[month]:
                 outfile.write(json.dumps(tweet) + '\n')
+                
+#%%
+def read_twitter_files(files):
+    import json, io, gzip
+    import progressbar
+    
+    if not isinstance(files, list):
+       files = [files]
+    tweets = []
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar = progressbar.ProgressBar()
+        for line in bar(infile):
+            if line != '\n':
+                try:
+                    t = json.loads(line)
+                except:
+                    continue
+                tweets.append(t)
+    return(tweets)
+                
+             
+                
