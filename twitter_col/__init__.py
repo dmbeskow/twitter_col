@@ -1128,7 +1128,76 @@ def check_inactive(api, uids):
             e2 = ast.literal_eval(e.reason)[0]['message']
             final['reason'].append(e2)
     return(pd.DataFrame(final))
-    
+#%%
+def extract_suspended(api, files):
+    '''
+    Loops through list of files and extracts all suspended accounts
+
+    Parameters
+    ----------
+    api : TYPE
+        DESCRIPTION.
+    files : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    import io, json, gzip
+    import progressbar
+    import time
+    suspended = {}
+    with open('suspended_users' + '_' + time.strftime('%Y%m%d') + '.json', 'w') as outfile:
+        for file in files:
+            if '.gz' in file:
+                infile = io.TextIOWrapper(gzip.open(file, 'r'))
+            else:
+                infile = open(file, 'r')
+            count = 0
+            ids = []
+            bar = progressbar.ProgressBar()
+            for line in bar(infile):
+                if line == '\n':
+                    continue
+                try:
+                    tweet = json.loads(line)
+                except:
+                    count += 1
+                if tweet['user']['id_str'] in suspended:
+                    outfile.write(json.dumps(tweet) + '\n')
+                else:
+                    ids.append(tweet['user']['id_str'])
+            ids = list(set(ids))
+            users = fetch_profiles(api, ids = ids)
+            new = parse_twitter_list(users)
+            notFound = list(set(ids) - set(new['id_str'].tolist()))
+            check = check_inactive(api, notFound)
+            check = check[check['reason'] == 'User has been suspended.']
+            for i in check['id_str']:
+                if i not in suspended:
+                    suspended[i] = True
+            if '.gz' in file:
+                infile = io.TextIOWrapper(gzip.open(file, 'r'))
+            else:
+                infile = open(file, 'r')
+            count = 0
+            ids = []
+            bar = progressbar.ProgressBar()
+            for line in bar(infile):
+                if line == '\n':
+                    continue
+                try:
+                    tweet = json.loads(line)
+                except:
+                    count += 1
+                if tweet['user']['id_str'] in suspended:
+                    outfile.write(json.dumps(tweet) + '\n')
+            print("Total of ", count, "JSON load errors")
+                
+                            
+                
 #%%
 def dedupe_twitter(list_of_tweets):
     """
