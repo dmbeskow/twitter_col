@@ -842,6 +842,9 @@ def get_edgelist_file(files, mentions = True, replies = True, retweets = True,
     import gzip
     import progressbar
     import io
+    
+    if not isinstance(files, list):
+      files = [files]
 
     From = []
     To = []
