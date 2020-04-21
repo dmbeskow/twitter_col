@@ -832,7 +832,7 @@ def parse_only_text(files, file_prefix = 'twitter', to_csv = False,
 #%%
 
         
-def get_edgelist_file(file, mentions = True, replies = True, retweets = True, 
+def get_edgelist_file(files, mentions = True, replies = True, retweets = True, 
                  urls = False, hashtags = False, to_csv = False, kind = 'screen_name'):
     ''' 
     Builds an agent x agent edgelist of a Tweet json (normal or gzipped)
@@ -848,60 +848,60 @@ def get_edgelist_file(file, mentions = True, replies = True, retweets = True,
     Type = []
     Time = []
     ID = []
-    
-    if '.gz' in file:
-        infile = io.TextIOWrapper(gzip.open(file, 'r'))
-    else:
-        infile = open(file, 'r')
-    bar = progressbar.ProgressBar()
-    count = 0
-    for line in bar(infile):
-        if line == '\n':
-            continue
-        try:
-            tweet = json.loads(line)
-        except:
-            count += 1
-        dateTime = tweet['created_at']
-        m = get_mention(tweet, kind = kind)
-        if len(m) > 0 and mentions:
-             for mention in m:
+    for f in files:
+        if '.gz' in f:
+            infile = io.TextIOWrapper(gzip.open(f, 'r'))
+        else:
+            infile = open(f, 'r')
+        bar = progressbar.ProgressBar()
+        count = 0
+        for line in bar(infile):
+            if line == '\n':
+                continue
+            try:
+                tweet = json.loads(line)
+            except:
+                count += 1
+            dateTime = tweet['created_at']
+            m = get_mention(tweet, kind = kind)
+            if len(m) > 0 and mentions:
+                 for mention in m:
+                     From.append(tweet['user'][kind])
+                     To.append(mention)
+                     Type.append('mention')
+                     Time.append(dateTime)
+                     ID.append(tweet['id_str'])
+            if tweet['in_reply_to_user_id_str'] != None and replies:
+                if kind == 'id_str':
+                    To.append(tweet['in_reply_to_user_id_str'])
+                else:
+                    To.append(tweet['in_reply_to_screen_name' ])                
+                From.append(tweet['user'][kind])
+                Type.append('reply')
+                Time.append(dateTime)
+                ID.append(tweet['id_str'])
+            if 'retweeted_status' in tweet.keys() and retweets:
                  From.append(tweet['user'][kind])
-                 To.append(mention)
-                 Type.append('mention')
+                 To.append(tweet['retweeted_status']['user'][kind])
+                 Type.append('retweet')
                  Time.append(dateTime)
                  ID.append(tweet['id_str'])
-        if tweet['in_reply_to_user_id_str'] != None and replies:
-            if kind == 'id_str':
-                To.append(tweet['in_reply_to_user_id_str'])
-            else:
-                To.append(tweet['in_reply_to_screen_name' ])                
-            From.append(tweet['user'][kind])
-            Type.append('reply')
-            Time.append(dateTime)
-            ID.append(tweet['id_str'])
-        if 'retweeted_status' in tweet.keys() and retweets:
-             From.append(tweet['user'][kind])
-             To.append(tweet['retweeted_status']['user'][kind])
-             Type.append('retweet')
-             Time.append(dateTime)
-             ID.append(tweet['id_str'])
-        u = get_urls(tweet)
-        if len(u) > 0 and urls:
-             for url in u:
-                 From.append(tweet['user'][kind])
-                 To.append(url)
-                 Type.append('url')
-                 Time.append(dateTime)
-                 ID.append(tweet['id_str'])
-        h = get_hash(tweet)
-        if len(h) > 0 and hashtags:
-             for Hash in h:
-                 From.append(tweet['user'][kind])
-                 To.append(Hash)
-                 Type.append('hashtag')
-                 Time.append(dateTime)
-                 ID.append(tweet['id_str'])
+            u = get_urls(tweet)
+            if len(u) > 0 and urls:
+                 for url in u:
+                     From.append(tweet['user'][kind])
+                     To.append(url)
+                     Type.append('url')
+                     Time.append(dateTime)
+                     ID.append(tweet['id_str'])
+            h = get_hash(tweet)
+            if len(h) > 0 and hashtags:
+                 for Hash in h:
+                     From.append(tweet['user'][kind])
+                     To.append(Hash)
+                     Type.append('hashtag')
+                     Time.append(dateTime)
+                     ID.append(tweet['id_str'])
 
     infile.close()        
     data = {'from': From,
@@ -1689,15 +1689,24 @@ def extract_coordinates(files, to_csv = False, file_prefix = 'topic'):
 def combine_dedupe(list_of_files, prefix = 'total_tweets'):
     import json, io, gzip
     import progressbar
-    
+    errors = []
     seen = {}
     with gzip.open(prefix + '.json.gz', 'wt') as outfile:
         bar = progressbar.ProgressBar()
         for f in bar(list_of_files):
             if '.gz' in f:
-                infile = io.TextIOWrapper(gzip.open(f, 'r'))
+                try:
+                    infile = io.TextIOWrapper(gzip.open(f, 'r'))
+                except:
+                    errors.append(f)
+                    continue
             else:
-                infile = open(f, 'r')
+                try:
+                    infile = open(f, 'r')
+                except:
+                    errors.append(f)
+                    continue
+                
     
             for line in infile:
                 if line != '\n':
@@ -1715,6 +1724,8 @@ def combine_dedupe(list_of_files, prefix = 'total_tweets'):
                             outfile.write(json.dumps(t) + '\n')
                     except:
                         continue
+    for e in errors:
+        print("Error with:", e)
                         
 
 #%%
@@ -1793,6 +1804,8 @@ def read_twitter_files(files):
                     continue
                 tweets.append(t)
     return(tweets)
+
+
                 
              
                 
